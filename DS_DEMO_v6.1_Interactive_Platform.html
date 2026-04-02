@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DeliverySitter — Demo Platform v6.1</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,600&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Lora:ital,wght@1,400;1,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --forest:#1B4332;--forest-mid:#2E7D32;--forest-pale:#E8F3EA;--forest-tint:#F0F6F1;
+  --gold:#C8962A;--gold-pale:#FFF8E6;--gold-border:#E8C870;
+  --cream:#FAFAF8;--white:#FFFFFF;--ink:#1A1A1A;--ink-mid:#444;--ink-light:#777;
+  --border:#E2E2DC;--border-soft:#EEEEEA;
+  --red:#C62828;--red-pale:#FFF0F0;--amber:#E65100;--amber-pale:#FFF4E0;
+  --blue:#1565C0;--blue-pale:#EEF4FD;--sidebar-bg:#F7F9F7;
+  --shadow-sm:0 1px 4px rgba(27,67,50,.06);--shadow-md:0 3px 12px rgba(27,67,50,.09);
+  --shadow-lg:0 8px 32px rgba(27,67,50,.13);
+  --r-sm:8px;--r-md:12px;--r-lg:16px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.6;color:var(--ink);background:var(--cream);}
+a{text-decoration:none;color:inherit;}
+button{font-family:inherit;cursor:pointer;}
+
+/* BRAND ICON — small, visible not distracting */
+.box-ic{font-size:.58em;vertical-align:middle;line-height:1;display:inline-block;margin:0 .5px;}
+.env-ic{font-size:.58em;vertical-align:middle;line-height:1;display:inline-block;margin:0 .5px;}
+
+/* LOGIN */
+#login-screen{min-height:100vh;background:var(--forest);display:flex;align-items:center;justify-content:center;background-image:radial-gradient(ellipse at 20% 50%,rgba(200,150,42,.12),transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(200,150,42,.08),transparent 50%);}
+.login-card{background:var(--white);border-radius:20px;padding:48px;width:460px;max-width:95vw;box-shadow:0 24px 64px rgba(0,0,0,.22);text-align:center;}
+.login-wm{font-family:'Playfair Display',serif;font-size:30px;font-weight:800;letter-spacing:-.5px;margin-bottom:4px;}
+.login-wm .ld{color:var(--gold);}
+.login-wm .ls{color:var(--forest);}
+.login-tag{font-family:'Lora',serif;font-style:italic;color:var(--gold);font-size:13px;margin-bottom:28px;}
+.login-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--ink-light);margin-bottom:8px;text-align:left;}
+.login-inp{width:100%;padding:13px 18px;border:2px solid var(--border);border-radius:var(--r-md);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--forest);outline:none;transition:border .2s;text-align:center;margin-bottom:12px;}
+.login-inp:focus{border-color:var(--forest);}
+.login-btn{width:100%;padding:13px;background:var(--forest);color:#fff;border:none;border-radius:var(--r-md);font-size:15px;font-weight:700;transition:background .2s;}
+.login-btn:hover{background:var(--forest-mid);}
+.login-err{display:none;background:var(--red-pale);color:var(--red);border-radius:var(--r-sm);padding:10px 14px;font-size:13px;font-weight:600;margin-top:10px;}
+.login-ok{display:none;background:var(--forest-pale);color:var(--forest);border-radius:var(--r-sm);padding:10px 14px;font-size:13px;font-weight:600;margin-top:10px;}
+.login-hint{font-size:12px;color:var(--ink-light);margin-top:18px;line-height:1.6;}
+.login-exp{display:none;background:var(--amber-pale);color:var(--amber);border-radius:var(--r-sm);padding:10px 14px;font-size:13px;font-weight:600;margin-top:10px;}
+
+/* PLATFORM */
+#platform{display:none;min-height:100vh;flex-direction:column;}
+
+/* NAV */
+.nav{background:var(--forest);height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,.2);flex-shrink:0;}
+.nav-brand{display:flex;align-items:center;gap:10px;}
+.wordmark{font-family:'Playfair Display',serif;font-size:19px;font-weight:800;letter-spacing:-.5px;}
+.wordmark .d{color:var(--gold);}
+.wordmark .s{color:#fff;}
+.wordmark .com-txt{color:rgba(255,255,255,.4);font-size:13px;}
+.nav-tagline{font-family:'Lora',serif;font-style:italic;color:var(--gold-border);font-size:11px;padding-left:10px;border-left:1px solid rgba(255,255,255,.2);}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.role-badge{background:rgba(200,150,42,.2);color:var(--gold);border:1px solid rgba(200,150,42,.45);font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px;letter-spacing:.3px;}
+.demo-badge{background:rgba(255,255,255,.1);color:rgba(255,255,255,.7);font-size:10px;font-weight:600;padding:4px 10px;border-radius:10px;letter-spacing:.5px;}
+.logout-btn{background:transparent;border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.65);font-size:11px;font-weight:600;padding:5px 12px;border-radius:8px;}
+.logout-btn:hover{border-color:rgba(255,255,255,.5);color:#fff;}
+
+/* SHELL */
+.shell{display:grid;grid-template-columns:240px 1fr;flex:1;}
+.sidebar{background:var(--sidebar-bg);border-right:1px solid var(--border);padding:16px 0;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;}
+.sb-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-light);padding:10px 18px 4px;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 18px;cursor:pointer;color:var(--ink-mid);font-size:13.5px;font-weight:500;border-left:3px solid transparent;transition:all .15s;}
+.sb-item:hover{background:var(--forest-pale);color:var(--forest);}
+.sb-item.active{background:var(--forest-pale);color:var(--forest);border-left-color:var(--forest);font-weight:600;}
+.sb-item .ic{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
+.sb-div{height:1px;background:var(--border-soft);margin:6px 18px;}
+
+/* CONTENT */
+.content{background:var(--cream);overflow-y:auto;}
+.view{display:none;padding:28px;}
+.view.active{display:block;}
+.ph{margin-bottom:24px;}
+.ph-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--forest);margin-bottom:4px;}
+.ph-sub{font-size:14px;color:var(--ink-light);}
+
+/* CARDS */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--shadow-sm);margin-bottom:16px;overflow:hidden;}
+.card-head{padding:14px 18px;border-bottom:1px solid var(--border-soft);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-weight:700;font-size:15px;color:var(--forest);}
+.card-body{padding:18px;}
+
+/* STAT GRID */
+.stat-grid{display:grid;gap:14px;margin-bottom:20px;}
+.g2{grid-template-columns:repeat(2,1fr);}
+.g3{grid-template-columns:repeat(3,1fr);}
+.g4{grid-template-columns:repeat(4,1fr);}
+.stat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-md);padding:18px;box-shadow:var(--shadow-sm);}
+.stat-card.forest{background:var(--forest);border-color:var(--forest);}
+.stat-card.gold{background:var(--gold);border-color:var(--gold);}
+.stat-card.pale{background:var(--forest-pale);border-color:#b8d8bc;}
+.stat-n{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--forest);line-height:1;}
+.stat-card.forest .stat-n{color:var(--gold);}
+.stat-card.gold .stat-n{color:var(--forest);}
+.stat-l{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:var(--ink-light);margin-top:5px;}
+.stat-card.forest .stat-l{color:rgba(255,255,255,.65);}
+.stat-card.gold .stat-l{color:rgba(27,67,50,.75);}
+.stat-trend{font-size:12px;font-weight:600;color:var(--forest-mid);margin-top:4px;}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:3px 9px;border-radius:8px;white-space:nowrap;}
+.bg{background:var(--forest-pale);color:var(--forest-mid);}
+.bgo{background:var(--gold-pale);color:#8B6A00;}
+.bbl{background:var(--blue-pale);color:var(--blue);}
+.br{background:var(--red-pale);color:var(--red);}
+.bgr{background:#F3F3F3;color:var(--ink-light);}
+.bam{background:var(--amber-pale);color:var(--amber);}
+
+/* TABLES */
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px;}
+.tbl th{background:var(--forest-tint);color:var(--forest);font-weight:700;font-size:11px;letter-spacing:.5px;text-transform:uppercase;padding:10px 14px;text-align:left;border-bottom:2px solid var(--border);}
+.tbl td{padding:10px 14px;border-bottom:1px solid var(--border-soft);vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:var(--forest-pale);}
+
+/* PROGRESS BAR */
+.bar-track{background:var(--border-soft);border-radius:6px;height:10px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--forest-mid),var(--gold));transition:width .8s ease;}
+.bar-fill.warn{background:linear-gradient(90deg,var(--amber),var(--red));}
+
+/* WELFARE WIDGET */
+.welfare-widget{background:var(--white);border:2px solid var(--gold);border-radius:var(--r-lg);padding:22px;margin-bottom:18px;box-shadow:var(--shadow-md);}
+.ww-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.ww-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--forest);}
+.ww-badge{background:var(--gold-pale);color:var(--gold);border:1px solid var(--gold-border);font-size:10px;font-weight:700;padding:3px 10px;border-radius:8px;letter-spacing:.3px;}
+.ww-amounts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px;}
+.ww-amt-n{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--forest);display:block;}
+.ww-amt-l{font-size:11px;color:var(--ink-light);text-transform:uppercase;letter-spacing:.4px;}
+
+/* NOTIFICATIONS */
+.notif{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:var(--r-sm);margin-bottom:10px;}
+.notif-f{background:var(--forest-pale);border-left:4px solid var(--forest);}
+.notif-g{background:var(--gold-pale);border-left:4px solid var(--gold);}
+.notif-r{background:var(--red-pale);border-left:4px solid var(--red);}
+.notif-b{background:var(--blue-pale);border-left:4px solid var(--blue);}
+.notif-ic{font-size:20px;flex-shrink:0;}
+.notif-title{font-weight:700;font-size:14px;color:var(--forest);margin-bottom:2px;}
+.notif-body{font-size:13px;color:var(--ink-mid);}
+
+/* PHONE MOCKUP */
+.phones-showcase{display:flex;gap:24px;overflow-x:auto;padding:8px 0 20px;}
+.phone-col{display:flex;flex-direction:column;align-items:center;gap:10px;flex-shrink:0;}
+.phone-lbl{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--forest);background:var(--forest-pale);padding:5px 14px;border-radius:14px;border:1px solid #b8d8bc;white-space:nowrap;}
+.phone-lbl.gold{background:var(--gold);color:var(--forest);border-color:var(--gold);}
+.phone-lbl.blue{background:var(--blue);color:#fff;border-color:var(--blue);}
+.phone{width:220px;background:#1a1a1a;border-radius:28px;border:2px solid #333;box-shadow:0 16px 48px rgba(0,0,0,.5),0 0 0 1px #444;overflow:hidden;flex-shrink:0;}
+.phone::before{content:'';display:block;width:60px;height:18px;background:#1a1a1a;border-radius:0 0 10px 10px;margin:0 auto;}
+.phone-screen{background:#F8F6F1;min-height:460px;overflow:hidden;display:flex;flex-direction:column;}
+.scr-hdr{background:var(--forest);padding:10px 12px 9px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.scr-hdr .app-nm{font-family:'Playfair Display',serif;font-size:12px;font-weight:800;color:var(--gold);}
+.scr-hdr .app-nm span{color:#fff;}
+.scr-hdr .status{font-size:9px;color:rgba(255,255,255,.5);}
+.scr-sec{padding:9px 11px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.scr-sec:last-of-type{border-bottom:none;}
+.scr-ttl{font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--forest-mid);margin-bottom:6px;}
+.p-card{background:#fff;border-radius:8px;border:1px solid var(--border);padding:7px 9px;margin-bottom:4px;display:flex;align-items:center;gap:7px;}
+.p-card .ic{width:26px;height:26px;background:var(--forest-pale);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.p-card .info{flex:1;min-width:0;}
+.p-card .info .cid{font-size:9px;font-weight:700;color:var(--forest);}
+.p-card .info .cdt{font-size:8px;color:var(--ink-light);margin-top:1px;}
+.p-badge{font-size:7px;font-weight:700;padding:2px 5px;border-radius:6px;flex-shrink:0;}
+.pbg{background:var(--forest-pale);color:var(--forest-mid);}
+.pba{background:var(--gold-pale);color:#8B6A00;}
+.pbr{background:var(--red-pale);color:var(--red);}
+.pbb{background:var(--blue-pale);color:var(--blue);}
+.p-btn{display:block;width:100%;padding:8px;border-radius:8px;text-align:center;font-size:10px;font-weight:700;margin-bottom:4px;cursor:pointer;border:none;}
+.p-btn-f{background:var(--forest);color:#fff;}
+.p-btn-g{background:var(--gold);color:#fff;}
+.p-btn-o{background:transparent;color:var(--forest);border:1.5px solid var(--forest);}
+.p-alert{border-radius:8px;padding:7px 9px;margin-bottom:5px;display:flex;gap:6px;align-items:flex-start;}
+.p-alert .ai{font-size:11px;flex-shrink:0;}
+.p-alert .at{font-size:8px;line-height:1.4;}
+.paf{background:var(--forest-pale);border-left:3px solid var(--forest);}
+.pag{background:var(--gold-pale);border-left:3px solid var(--gold);}
+.par{background:var(--red-pale);border-left:3px solid var(--red);}
+.pab{background:var(--blue-pale);border-left:3px solid var(--blue);}
+.p-map{background:linear-gradient(135deg,#d4e6d4,#b8d4b8,#a0c4a0);border-radius:9px;height:65px;display:flex;align-items:center;justify-content:center;margin-bottom:5px;position:relative;overflow:hidden;}
+.p-map::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 9px,rgba(255,255,255,.12) 9px,rgba(255,255,255,.12) 10px),repeating-linear-gradient(90deg,transparent,transparent 9px,rgba(255,255,255,.12) 9px,rgba(255,255,255,.12) 10px);}
+.p-map-pin{font-size:20px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.3));}
+.p-map-live{position:absolute;top:5px;right:6px;background:var(--red);color:#fff;font-size:7px;font-weight:700;padding:2px 5px;border-radius:6px;}
+.p-map-eta{position:absolute;bottom:5px;left:6px;background:var(--forest);color:var(--gold);font-size:8px;font-weight:700;padding:2px 6px;border-radius:6px;}
+.p-earn{background:linear-gradient(135deg,var(--forest),var(--forest-mid));border-radius:9px;padding:10px;color:#fff;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;}
+.p-earn .amount{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--gold);}
+.p-earn .lbl{font-size:8px;color:rgba(255,255,255,.65);}
+.p-earn .cap{font-size:8px;color:rgba(255,255,255,.8);text-align:right;}
+.cap-bar-s{height:3px;background:rgba(255,255,255,.2);border-radius:2px;margin-top:3px;width:65px;}
+.cap-fill-s{height:3px;background:var(--gold);border-radius:2px;width:65%;}
+.p-rating{display:flex;align-items:center;gap:6px;padding:5px 0;}
+.p-rating-num{font-size:18px;font-weight:700;color:var(--forest);font-family:'Playfair Display',serif;}
+.p-stars{color:var(--gold);font-size:10px;}
+.p-scan{background:var(--forest);border-radius:9px;padding:12px;text-align:center;margin-bottom:6px;position:relative;overflow:hidden;cursor:pointer;}
+.p-scan::before{content:'';position:absolute;top:7px;left:7px;right:7px;bottom:7px;border:1.5px dashed rgba(200,150,42,.4);border-radius:6px;pointer-events:none;}
+.p-scan-ic{font-size:26px;display:block;margin-bottom:4px;}
+.p-scan-txt{font-size:9px;font-weight:600;color:#fff;}
+.p-scan-sub{font-size:7px;color:rgba(255,255,255,.55);margin-top:2px;}
+.p-qr{background:#fff;border:2px solid var(--forest);border-radius:8px;padding:8px;text-align:center;margin-bottom:6px;}
+.p-qr-vis{width:44px;height:44px;background:repeating-linear-gradient(0deg,#1B4332,#1B4332 4px,transparent 4px,transparent 8px),repeating-linear-gradient(90deg,#1B4332,#1B4332 4px,transparent 4px,transparent 8px);border-radius:3px;margin:0 auto 4px;position:relative;}
+.p-qr-vis::before{content:'';position:absolute;inset:12px;background:#fff;border-radius:2px;}
+.p-qr-id{font-size:8px;font-weight:700;color:var(--forest);letter-spacing:1px;}
+.p-chain{display:flex;gap:6px;align-items:flex-start;padding:4px 0;border-bottom:1px solid var(--border);}
+.p-chain:last-child{border-bottom:none;}
+.c-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;margin-top:1px;font-size:6px;display:flex;align-items:center;justify-content:center;font-weight:700;}
+.cg{background:var(--forest-pale);color:var(--forest-mid);border:1.5px solid var(--forest-mid);}
+.ca{background:var(--gold-pale);color:#8B6A00;border:1.5px solid var(--gold);}
+.c-txt .ct{font-size:8px;font-weight:600;color:var(--ink);}
+.c-txt .cs{font-size:7px;color:var(--ink-light);margin-top:1px;}
+.p-nav{background:#fff;border-top:1px solid var(--border);display:flex;padding:5px 0 3px;margin-top:auto;flex-shrink:0;}
+.p-nav-item{flex:1;text-align:center;font-size:7px;color:var(--ink-light);}
+.p-nav-item.active{color:var(--forest);}
+.p-nav-ic{font-size:13px;display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:6px;margin:0 auto 1px;}
+.p-nav-item.active .p-nav-ic{background:var(--forest-pale);}
+.p-ir{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:9px;}
+.p-ir:last-child{border-bottom:none;}
+.p-ir .lbl{color:var(--ink-light);}
+.p-ir .val{font-weight:600;color:var(--ink);}
+.p-ir .val.g{color:var(--forest-mid);}
+.p-prog{display:flex;align-items:center;gap:5px;margin-bottom:4px;}
+.p-prog-lbl{font-size:7px;color:var(--ink-light);width:55px;flex-shrink:0;}
+.p-prog-bg{flex:1;height:4px;background:var(--forest-pale);border-radius:2px;}
+.p-prog-fill{height:4px;background:var(--forest);border-radius:2px;}
+.p-prog-val{font-size:7px;font-weight:700;color:var(--forest);width:22px;text-align:right;flex-shrink:0;}
+.p-tracker{display:flex;align-items:center;margin:6px 0;}
+.t-step{flex:1;text-align:center;}
+.t-dot{width:16px;height:16px;border-radius:50%;margin:0 auto 2px;font-size:7px;display:flex;align-items:center;justify-content:center;font-weight:700;}
+.t-dot.done{background:var(--forest);color:var(--gold);}
+.t-dot.act{background:var(--gold);color:#fff;box-shadow:0 0 0 3px var(--gold-pale);}
+.t-dot.pend{background:var(--border);color:var(--ink-light);}
+.t-lbl{font-size:6px;color:var(--ink-light);line-height:1.2;}
+.t-line{height:2px;background:var(--border);flex:0 0 10px;margin-bottom:14px;}
+.t-line.done{background:var(--forest);}
+.p-stat-row{display:flex;gap:4px;margin-bottom:5px;}
+.p-stat-box{flex:1;background:var(--forest);color:#fff;border-radius:8px;padding:7px 5px;text-align:center;}
+.p-stat-num{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--gold);display:block;}
+.p-stat-lbl{font-size:7px;color:rgba(255,255,255,.65);margin-top:1px;line-height:1.2;}
+.p-stat-box.gold{background:var(--gold);}
+.p-stat-box.gold .p-stat-num{color:var(--forest);}
+
+/* CODE GENERATOR */
+.gen-form{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
+.gen-field label{font-size:12px;font-weight:700;color:var(--ink-mid);margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:.5px;}
+.gen-field input,.gen-field select{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);outline:none;transition:border .2s;background:var(--white);}
+.gen-field input:focus,.gen-field select:focus{border-color:var(--forest);}
+.gen-btn{background:var(--forest);color:#fff;border:none;border-radius:var(--r-md);padding:13px 28px;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s;width:100%;margin-top:4px;}
+.gen-btn:hover{background:var(--forest-mid);}
+.gen-result{display:none;margin-top:16px;}
+.gen-code-display{background:var(--forest);border-radius:var(--r-md);padding:20px;text-align:center;margin-bottom:14px;}
+.gen-code-val{font-family:'Courier New',monospace;font-size:22px;font-weight:700;color:var(--gold);letter-spacing:3px;display:block;margin-bottom:6px;}
+.gen-code-meta{font-size:12px;color:rgba(255,255,255,.65);}
+.email-preview{background:#F8F8F8;border:1px solid var(--border);border-radius:var(--r-md);padding:18px;font-size:13px;line-height:1.7;color:var(--ink-mid);white-space:pre-wrap;font-family:'DM Sans',sans-serif;max-height:320px;overflow-y:auto;}
+.email-subject{background:var(--forest-pale);border-radius:var(--r-sm);padding:10px 14px;font-size:13px;font-weight:700;color:var(--forest);margin-bottom:8px;}
+.email-actions{display:flex;gap:10px;margin-top:12px;}
+.btn-send{background:var(--forest);color:#fff;border:none;border-radius:var(--r-sm);padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;flex:1;}
+.btn-copy{background:var(--white);color:var(--forest);border:1.5px solid var(--forest);border-radius:var(--r-sm);padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;flex:1;}
+
+/* ACCESS LOG */
+.log-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px;}
+.log-search{padding:9px 14px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:13px;outline:none;font-family:inherit;flex:1;}
+.log-search:focus{border-color:var(--forest);}
+.csv-btn{background:var(--forest-pale);color:var(--forest);border:1.5px solid #b8d8bc;border-radius:var(--r-sm);padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;}
+.csv-btn:hover{background:var(--forest);color:#fff;}
+.status-active{background:var(--forest-pale);color:var(--forest-mid);}
+.status-expired{background:var(--red-pale);color:var(--red);}
+.status-pending{background:var(--gold-pale);color:#8B6A00;}
+.revoke-btn{background:var(--red-pale);color:var(--red);border:1px solid #f5b8b8;border-radius:6px;padding:3px 9px;font-size:11px;font-weight:700;cursor:pointer;}
+
+/* STEP FLOW */
+.step-flow{display:flex;align-items:center;gap:0;overflow-x:auto;margin-bottom:20px;padding-bottom:8px;}
+.step-node{flex-shrink:0;background:var(--forest);border-radius:var(--r-md);padding:14px;text-align:center;width:130px;}
+.step-node.gold{background:var(--gold);}
+.step-node .s-ico{font-size:20px;margin-bottom:4px;}
+.step-node .s-title{font-size:10px;font-weight:700;color:#fff;line-height:1.3;}
+.step-node.gold .s-title{color:var(--forest);}
+.step-node .s-sub{font-size:8px;color:rgba(255,255,255,.65);margin-top:2px;}
+.step-node.gold .s-sub{color:rgba(27,67,50,.7);}
+.step-arrow{flex-shrink:0;width:28px;text-align:center;color:var(--gold);font-size:18px;font-weight:700;}
+
+/* PILL TABS */
+.pill-tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;}
+.pill{background:var(--white);border:1.5px solid var(--border);border-radius:20px;padding:7px 16px;font-size:13px;font-weight:600;color:var(--ink-mid);cursor:pointer;transition:all .15s;}
+.pill:hover{border-color:var(--forest);color:var(--forest);}
+.pill.active{background:var(--forest);border-color:var(--forest);color:var(--white);}
+
+/* DEC BUTTONS */
+.dec-btn{flex:1;border:2px solid var(--border);background:var(--white);border-radius:var(--r-md);padding:14px 10px;text-align:center;cursor:pointer;transition:all .18s;}
+.dec-btn:hover{border-color:var(--forest);background:var(--forest-pale);}
+.dec-btn.selected{border-color:var(--forest);background:var(--forest);color:var(--white);}
+.dec-btn .dec-ico{font-size:22px;margin-bottom:5px;}
+.dec-btn .dec-label{font-size:13px;font-weight:700;color:var(--forest);}
+.dec-btn.selected .dec-label{color:var(--white);}
+.dec-btn .dec-sub{font-size:11px;color:var(--ink-light);margin-top:3px;}
+.dec-btn.selected .dec-sub{color:rgba(255,255,255,.7);}
+
+/* INPUTS */
+.inp{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);outline:none;transition:border .2s;}
+.inp:focus{border-color:var(--forest);}
+.inp-row{display:flex;gap:10px;align-items:flex-end;margin-bottom:14px;}
+.inp-row .inp{flex:1;}
+.inp-row .btn-calc{background:var(--forest);color:#fff;border:none;border-radius:var(--r-sm);padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;}
+.inp-label{font-size:12px;font-weight:700;color:var(--ink-mid);margin-bottom:4px;}
+
+/* CHART */
+.chart-area{background:var(--white);border:1px solid var(--border);border-radius:var(--r-md);padding:20px;margin-bottom:16px;}
+.chart-bars{display:flex;align-items:flex-end;gap:6px;height:120px;margin-bottom:8px;}
+.c-bar-w{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.c-bar{border-radius:4px 4px 0 0;width:100%;min-height:4px;}
+.c-bar-lbl{font-size:10px;color:var(--ink-light);}
+.c-bar-val{font-size:9px;font-weight:700;color:var(--forest);}
+
+/* IMPACT */
+.impact-card{background:var(--white);border:2px solid var(--forest);border-radius:var(--r-lg);padding:20px;margin-bottom:16px;}
+.impact-num{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:var(--forest);}
+.impact-tag{display:inline-block;background:var(--gold);color:var(--forest);font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px;margin-top:8px;}
+
+/* MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:center;justify-content:center;}
+.modal-bg.open{display:flex;}
+.modal{background:var(--white);border-radius:var(--r-lg);padding:28px;max-width:480px;width:90%;box-shadow:var(--shadow-lg);}
+.modal-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--forest);margin-bottom:12px;}
+.modal-close{float:right;background:none;border:none;font-size:22px;color:var(--ink-light);cursor:pointer;}
+.qr-demo{width:120px;height:120px;background:repeating-linear-gradient(0deg,#1B4332,#1B4332 5px,transparent 5px,transparent 10px),repeating-linear-gradient(90deg,#1B4332,#1B4332 5px,transparent 5px,transparent 10px);border-radius:8px;margin:0 auto 12px;position:relative;border:4px solid var(--forest);}
+.gps-widget{background:#0d1117;border-radius:var(--r-md);padding:14px;color:#fff;margin-top:12px;font-size:12px;}
+.gps-row{display:flex;justify-content:space-between;margin-bottom:6px;}
+.gps-lbl{color:rgba(255,255,255,.5);}
+.gps-val{font-weight:700;color:#4CAF50;}
+.sandbox-box{background:#111;border-radius:var(--r-sm);padding:16px;font-family:'Courier New',monospace;font-size:12px;color:#4CAF50;white-space:pre;overflow-x:auto;line-height:1.5;}
+
+/* READ-ONLY OVERLAY */
+.readonly-overlay{pointer-events:none;opacity:.4;}
+.admin-only-msg{display:none;background:var(--amber-pale);border:1px solid var(--amber);border-radius:var(--r-sm);padding:12px 16px;font-size:13px;color:var(--amber);font-weight:600;margin-bottom:16px;}
+
+/* GITHUB GUIDE */
+.gh-step{display:flex;gap:14px;align-items:flex-start;padding:14px;background:var(--white);border:1px solid var(--border);border-radius:var(--r-md);margin-bottom:10px;}
+.gh-num{width:32px;height:32px;background:var(--forest);color:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;}
+.gh-text{flex:1;}
+.gh-text strong{color:var(--forest);display:block;margin-bottom:3px;}
+.gh-text span{font-size:13px;color:var(--ink-mid);}
+.code-block{background:#111;color:#4CAF50;border-radius:var(--r-sm);padding:10px 14px;font-family:'Courier New',monospace;font-size:13px;margin-top:6px;word-break:break-all;}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-wm"><span class="ld">delivery</span><span class="ls">sitter</span><span class="ld"><span class="box-ic">📦</span></span><span class="ls">com</span><span class="ls" style="font-size:.75em;">™</span></div>
+    <div class="login-tag">You're in safe hands</div>
+    <div class="login-lbl">Enter your access code</div>
+    <input type="text" class="login-inp" id="code-input" placeholder="DS-T0-XXX-0000" maxlength="30" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false">
+    <button class="login-btn" onclick="doLogin()">Access Platform →</button>
+    <div class="login-err" id="login-err">❌ Invalid access code. Please check and try again.</div>
+    <div class="login-exp" id="login-exp">⏱ This access code has expired. Contact Michelle Bailey for a new code.</div>
+    <div class="login-ok" id="login-ok"></div>
+    <div class="login-hint">Your access code was provided by Michelle Bailey.<br><strong>michellebaileydeliverysitter@outlook.com</strong> · 087 746 5993</div>
+  </div>
+</div>
+
+<!-- PLATFORM -->
+<div id="platform">
+  <nav class="nav">
+    <div class="nav-brand">
+      <div class="wordmark"><span class="d">delivery</span><span class="s">sitter</span><span class="d"><span class="box-ic">📦</span></span><span class="com-txt">com</span></div>
+      <div class="nav-tagline">You're in safe hands</div>
+    </div>
+    <div class="nav-right">
+      <span class="demo-badge">DEMO v6.1</span>
+      <span class="role-badge" id="role-badge">—</span>
+      <button class="logout-btn" onclick="doLogout()">← Exit</button>
+    </div>
+  </nav>
+
+  <div class="shell">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="content">
+
+      <!-- OVERVIEW -->
+      <div class="view active" id="view-overview">
+        <div class="ph"><div class="ph-title" id="ov-title">Welcome</div><div class="ph-sub" id="ov-sub"></div></div>
+        <div id="ov-body"></div>
+      </div>
+
+      <!-- INVESTOR DASHBOARD -->
+      <div class="view" id="view-investor">
+        <div class="ph"><div class="ph-title">Investor Dashboard</div><div class="ph-sub">Read-only · Pilot metrics · Synthetic data · DS_FIN_v5.0 authority</div></div>
+        <div class="stat-grid g4">
+          <div class="stat-card forest"><div class="stat-n">24</div><div class="stat-l">Active Sitters</div><div class="stat-trend">Pilot · Co. Meath</div></div>
+          <div class="stat-card gold"><div class="stat-n">2,847</div><div class="stat-l">Parcels (M1)</div><div class="stat-trend">↑ 23% vs forecast</div></div>
+          <div class="stat-card pale"><div class="stat-n">97.2%</div><div class="stat-l">First Attempt Rate</div><div class="stat-trend">Target ≥95% ✓</div></div>
+          <div class="stat-card"><div class="stat-n">4.87</div><div class="stat-l">Avg Sitter Rating</div><div class="stat-trend">Out of 5.00</div></div>
+        </div>
+        <div class="stat-grid g3">
+          <div class="stat-card"><div class="stat-n">1.2t</div><div class="stat-l">CO₂ Avoided</div></div>
+          <div class="stat-card"><div class="stat-n">3</div><div class="stat-l">Institutional Partners</div><div class="stat-trend">GAA · School · LCDC</div></div>
+          <div class="stat-card forest"><div class="stat-n">M8</div><div class="stat-l">Cash-flow Positive</div><div class="stat-trend">Feb 2027</div></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">📈 Revenue Projection — 3 Year</div></div>
+          <div class="card-body">
+            <div class="chart-area"><div class="chart-bars">
+              <div class="c-bar-w"><div class="c-bar-val">€875k</div><div class="c-bar" style="height:30%;background:var(--forest);"></div><div class="c-bar-lbl">Y1</div></div>
+              <div class="c-bar-w"><div class="c-bar-val">€2.91M</div><div class="c-bar" style="height:60%;background:var(--forest-mid);"></div><div class="c-bar-lbl">Y2</div></div>
+              <div class="c-bar-w"><div class="c-bar-val">€5.61M</div><div class="c-bar" style="height:100%;background:var(--gold);"></div><div class="c-bar-lbl">Y3</div></div>
+            </div></div>
+            <div class="stat-grid g3">
+              <div class="stat-card pale"><div class="stat-n" style="font-size:20px;">€874,940</div><div class="stat-l">Y1 Revenue (8 streams)</div></div>
+              <div class="stat-card pale"><div class="stat-n" style="font-size:20px;">43.3%</div><div class="stat-l">Y1 Gross Margin</div></div>
+              <div class="stat-card pale"><div class="stat-n" style="font-size:20px;">€280–320k</div><div class="stat-l">Seed Raise Target</div></div>
+            </div>
+            <div class="notif notif-g"><div class="notif-ic">💡</div><div><div class="notif-title">Investment Terms</div><div class="notif-body">10–14% equity · €1M–€1.5M pre-money valuation · Series A trigger: pilot data + 5+ LOIs + Month 8 cash-flow positive</div></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">🏁 Pilot Milestones</div></div>
+          <div class="card-body"><div class="step-flow">
+            <div class="step-node"><div class="s-ico">📋</div><div class="s-title">Legal &amp; GDPR</div><div class="s-sub">DPC · DPIA · Privacy</div></div>
+            <div class="step-arrow">→</div>
+            <div class="step-node gold"><div class="s-ico">🏗️</div><div class="s-title">Platform Build</div><div class="s-sub">59 steps · 6 phases</div></div>
+            <div class="step-arrow">→</div>
+            <div class="step-node"><div class="s-ico">🚀</div><div class="s-title">Pilot Launch</div><div class="s-sub">22 June 2026</div></div>
+            <div class="step-arrow">→</div>
+            <div class="step-node gold"><div class="s-ico">📊</div><div class="s-title">Pilot Data M1–M6</div><div class="s-sub">Live metrics</div></div>
+            <div class="step-arrow">→</div>
+            <div class="step-node"><div class="s-ico">💰</div><div class="s-title">Series A</div><div class="s-sub">5+ LOIs · M8 positive</div></div>
+          </div></div>
+        </div>
+      </div>
+
+      <!-- SITTER APP -->
+      <div class="view" id="view-sitter-app">
+        <div class="ph"><div class="ph-title">Sitter App — Mobile Demo</div><div class="ph-sub">Welfare cap live · QR scan · Profile · Earnings</div></div>
+        <div class="pill-tabs">
+          <div class="pill active" onclick="switchPhoneTab('sitter','s-home',this)">🏠 Dashboard</div>
+          <div class="pill" onclick="switchPhoneTab('sitter','s-scan',this)">📷 Scan</div>
+          <div class="pill" onclick="switchPhoneTab('sitter','s-profile',this)">👤 Profile</div>
+          <div class="pill" onclick="switchPhoneTab('sitter','s-earnings',this)">💰 Earnings</div>
+          <div class="pill" onclick="switchPhoneTab('sitter','s-training',this)">🎓 Training</div>
+        </div>
+        <div class="phones-showcase" id="sitter-phones">
+          <div class="phone-col" id="s-home">
+            <div class="phone-lbl">🏠 Dashboard</div>
+            <div class="phone"><div class="phone-screen">
+              <div class="scr-hdr"><div class="app-nm">delivery<span>sitter</span></div><div class="status">9:41</div></div>
+              <div class="scr-sec"><div class="p-earn"><div><div class="amount">€87.50</div><div class="lbl">This week · 14 parcels</div></div><div class="cap">Welfare cap<br><div class="cap-bar-s"><div class="cap-fill-s"></div></div>€87 / €120</div></div></div>
+              <div class="scr-sec">
+                <div class="scr-ttl">📦 Van inbound — 8 mins</div>
+                <div class="p-alert pag"><div class="ai">🚐</div><div class="at"><strong>2 parcels arriving.</strong> Be ready at 9:50am.</div></div>
+                <div class="p-map"><div class="p-map-pin">📍</div><div class="p-map-live">● LIVE</div><div class="p-map-eta">ETA: 8 min</div></div>
+                <button class="p-btn p-btn-f">📷 Ready to Scan</button>
+              </div>
+              <div class="scr-sec">
+                <div class="scr-ttl">📬 Holding (2 parcels)</div>
+                <div class="p-card"><div class="ic">📦</div><div class="info"><div class="cid">AP-20490321</div><div class="cdt">Medium · Day 1 of 3</div></div><span class="p-badge pbg">Waiting</span></div>
+                <div class="p-card"><div class="ic">🛍️</div><div class="info"><div class="cid">AP-20490318</div><div class="cdt">Small · Day 2 of 3</div></div><span class="p-badge pba">Remind</span></div>
+              </div>
+              <div class="scr-sec"><div class="p-rating"><div class="p-rating-num">4.9</div><div class="p-stars">★★★★★</div><div style="font-size:8px;color:var(--ink-light)">46 deliveries · Top Sitter ✓</div></div></div>
+              <div class="p-nav">
+                <div class="p-nav-item active"><div class="p-nav-ic">🏠</div>Home</div>
+                <div class="p-nav-item"><div class="p-nav-ic">📦</div>Parcels</div>
+                <div class="p-nav-item"><div class="p-nav-ic">📷</div>Scan</div>
+                <div class="p-nav-item"><div class="p-nav-ic">💰</div>Pay</div>
+                <div class="p-nav-item"><div class="p-nav-ic">👤</div>Profile</div>
+              </div>
+            </div></div>
+          </div>
+          <div class="phone-col" id="s-scan" style="display:none">
+            <div class="phone-lbl">📷 Scan &amp; Accept</div>
+            <div class="phone"><div class="phone-screen">
+              <div class="scr-hdr"><div class="app-nm">delivery<span>sitter</span></div><div class="status">9:41</div></div>
+              <div class="scr-sec">
+                <div class="scr-ttl">🚐 Driver Arrived</div>
+                <div class="p-scan" onclick="demoScan(this)"><span class="p-scan-ic">📦</span><div class="p-scan-txt">Point at parcel barcode</div><div class="p-scan-sub">Tap to simulate scan</div></div>
+              </div>
+              <div class="scr-sec">
+                <div class="scr-ttl">📋 Condition</div>
+                <div class="p-card" style="border:2px solid var(--forest)"><div class="ic">✅</div><div class="info"><div class="cid">Good Condition</div><div class="cdt">Package intact</div></div></div>
+                <div class="p-card"><div class="ic">⚠️</div><div class="info"><div class="cid">Minor Damage</div><div class="cdt">Log and accept</div></div></div>
+              </div>
+              <div class="scr-sec">
+                <div class="scr-ttl">🔐 Mutual QR</div>
+                <div class="p-qr"><div class="p-qr-vis"></div><div class="p-qr-id">DS:AP-20490321:v1</div><div style="font-size:7px;color:var(--ink-light);margin-top:2px;">GPS ✓ · Both within 50m · 87s</div></div>
+                <button class="p-btn p-btn-g" onclick="openModal('qr')">📲 Driver Scans Your QR</button>
+              </div>
+              <div class="p-nav">
+                <div class="p-nav-item"><div class="p-nav-ic">🏠</div>Home</div>
+                <div class="p-nav-item"><div class="p-nav-ic">📦</div>Parcels</div>
+                <div class="p-nav-item active"><div class="p-nav-ic">📷</div>Scan</div>
+                <div class="p-nav-item"><div class="p-nav-ic">💰</div>Pay</div>
+                <div class="p-nav-item"><div class="p-nav-ic">👤</div>Profile</div>
+              </div>
+            </div></div>
+          </div>
+          <div class="phone-col" id="s-profile" style="display:none">
+            <div class="phone-lbl">👤 Profile</div>
+            <div class="phone"><div class="phone-screen">
+              <div class="scr-hdr"><div class="app-nm">delivery<span>sitter</span></div><div class="status">9:41</div></div>
+              <div class="scr-sec" style="text-align:center;">
+                <div style="width:48px;height:48px;background:var(--forest);border-radius:50%;margin:0 auto 5px;display:flex;align-items:center;justify-content:center;font-size:20px;border:3px solid var(--gold);">👩</div>
+                <div style="font-size:12px;font-weight:700;color:var(--forest);">Mary O'Brien</div>
+                <div style="font-size:8px;color:var(--ink-light);">Navan, Co. Meath · Active Jan 2026</div>
+                <div style="margin-top:4px;display:flex;gap:4px;flex-wrap:wrap;justify-content:center;">
+                  <span style="background:var(--forest-pale);color:var(--forest-mid);font-size:7px;font-weight:700;padding:2px 5px;border-radius:5px;">✓ Garda Vetted</span>
+                  <span style="background:var(--gold-pale);color:#8B6A00;font-size:7px;font-weight:700;padding:2px 5px;border-radius:5px;">Top Sitter</span>
+                </div>
+              </div>
+              <div class="scr-sec">
+                <div class="scr-ttl">⭐ Ratings</div>
+                <div style="display:flex;align-items:center;gap:7px;">
+                  <div style="text-align:center;"><div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--forest);">4.9</div><div class="p-stars">★★★★★</div></div>
+                  <div style="flex:1;">
+                    <div class="p-prog"><span class="p-prog-lbl">Timeliness</span><div class="p-prog-bg"><div class="p-prog-fill" style="width:98%"></div></div><span class="p-prog-val">4.9</span></div>
+                    <div class="p-prog"><span class="p-prog-lbl">Care</span><div class="p-prog-bg"><div class="p-prog-fill" style="width:100%"></div></div><span class="p-prog-val">5.0</span></div>
+                    <div class="p-prog"><span class="p-prog-lbl">Availability</span><div class="p-prog-bg"><div class="p-prog-fill" style="width:94%"></div></div><span class="p-prog-val">4.7</span></div>
+                  </div>
+                </div>
+              </div>
+              <div class="scr-sec"><div class="p-stat-row">
+                <div class="p-stat-box"><span class="p-stat-num">46</span><div class="p-stat-lbl">Deliveries</div></div>
+                <div class="p-stat-box gold"><span class="p-stat-num">0</span><div class="p-stat-lbl">Disputes</div></div>
+                <div class="p-stat-box"><span class="p-stat-num">€312</span><div class="p-stat-lbl">Earned</div></div>
+              </div></div>
+              <div class="p-nav">
+                <div class="p-nav-item"><div class="p-nav-ic">🏠</div>Home</div>
+                <div class="p-nav-item active"><div class="p-nav-ic">👤</div>Profile</div>
+                <div class="p-nav-item"><div class="p-nav-ic">📷</div>Scan</div>
+                <div class="p-nav-item"><div class="p-nav-ic">💰</div>Pay</div>
+                <div class="p-nav-item"><div class="p-nav-ic">⚙️</div>Settings</div>
+              </div>
+            </div></div>
+          </div>
+          <div class="phone-col" id="s-earnings" style="display:none">
+            <div class="phone-lbl gold">💰 Earnings &amp; Cap</div>
+            <div class="phone"><div class="phone-screen">
+              <div class="scr-hdr"><div class="app-nm">delivery<span>sitter</span></div><div class="status">9:41</div></div>
+              <div class="scr-sec">
+                <div class="p-earn"><div><div class="amount">€87.50</div><div class="lbl">April 2026</div></div><div class="cap">Cap: €120<br><div class="cap-bar-s"><div class="cap-fill-s"></div></div>✓ Safe</div></div>
+                <div class="p-alert paf"><div class="ai">✅</div><div class="at">€32.50 below your cap. You can accept more parcels this month.</div></div>
+              </div>
+              <div class="scr-sec">
+                <div class="scr-ttl">⚙️ Adjust My Cap</div>
+                <input type="range" min="50" max="300" value="120" style="width:100%;accent-color:var(--forest);margin-bottom:5px;" oninput="document.getElementById('cap-disp').textContent='€'+this.value+'/month'">
+                <div style="text-align:center;font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--forest);" id="cap-disp">€120/month</div>
+                <button class="p-btn p-btn-f" style="margin-top:6px" onclick="alert('Cap updated ✓')">Save Cap Setting</button>
+              </div>
+              <div class="p-nav">
+                <div class="p-nav-item"><div class="p-nav-ic">🏠</div>Home</div>
+                <div class="p-nav-item"><div class="p-nav-ic">👤</div>Profile</div>
+                <div class="p-nav-item"><div class="p-nav-ic">📷</div>Scan</div>
+                <div class="p-nav-item active"><div class="p-nav-ic">💰</div>Pay</div>
+                <div class="p-nav-item"><div class="p-nav-ic">⚙️</div>Settings</div>
+              </div>
+            </div></div>
+          </div>
+          <div class="phone-col" id="s-training" style="display:none">
+            <div class="phone-lbl">🎓 Training</div>
+            <div class="phone"><div class="phone-screen">
+              <div class="scr-hdr"><div class="app-nm">delivery<span>sitter</span></div><div class="status">9:41</div></div>
+              <div class="scr-sec">
+                <div class="scr-ttl">🎓 Modules</div>
+                <div class="p-card"><div class="ic" style="background:var(--forest);color:var(--gold);">✓</div><div class="info"><div class="cid">Module 1 — Welcome</div><div class="cdt">Completed · Apr 2026</div></div><span class="p-badge pbg">Done</span></div>
+                <div class="p-card"><div class="ic" style="background:var(--forest);color:var(--gold);">✓</div><div class="info"><div class="cid">Module 2 — QR &amp; Parcel Care</div><div class="cdt">Completed · Apr 2026</div></div><span class="p-badge pbg">Done</span></div>
+                <div class="p-card"><div class="ic" style="background:var(--gold);color:var(--forest);">→</div><div class="info"><div class="cid">Module 3 — GDPR &amp; Data</div><div class="cdt">In progress · 60%</div></div><span class="p-badge pba">Active</span></div>
+                <div class="p-card"><div class="ic">🔒</div><div class="info"><div class="cid">Module 4 — Fraud Awareness</div><div class="cdt">Locked</div></div><span class="p-badge pbr">Locked</span></div>
+              </div>
+              <div class="p-nav">
+                <div class="p-nav-item"><div class="p-nav-ic">🏠</div>Home</div>
+                <div class="p-nav-item"><div class="p-nav-ic">👤</div>Profile</div>
+                <div class="p-nav-item active"><div class="p-nav-ic">🎓</div>Training</div>
+                <div class="p-nav-item"><div class="p-nav-ic">💰</div>Pay</div>
+                <div class="p-nav-item"><div class="p-nav-ic">⚙️</div>Settings</div>
+              </div>
+            </div></div>
+          </div>
+        </div>
+        <div class="welfare-widget">
+          <div class="ww-head"><div class="ww-title">🛡️ Welfare Cap Engine</div><span class="ww-badge">SERVER-SIDE · LIVE</span></div>
+          <div class="ww-amounts">
+            <div><span class="ww-amt-n">€87.50</span><span class="ww-amt-l">Earned (April)</span></div>
+            <div><span class="ww-amt-n">€120.00</span><span class="ww-amt-l">Cap Setting</span></div>
+            <div><span class="ww-amt-n">€32.50</span><span class="ww-amt-l">Remaining</span></div>
+          </div>
+          <div class="bar-track" style="margin-bottom:10px;"><div class="bar-fill" style="width:73%;"></div></div>
+          <div style="font-size:13px;color:var(--ink-mid);">Cap accrues at <strong>mutual_qr_collect</strong> event. Monthly reset 00:01 on 1st. At 80% → push alert. At 100% → assignments auto-pause.</div>
+        </div>
+      </div>
+
+      <!-- SHOPPER APP -->
+      <div class="view" id="view-shopper-app">
+        <div class="ph"><div class="ph-title">CT1 Shopper App</div><div class="ph-sub">Track · Collect · Returns</div></div>
+        <div class="pill-tabs">
+          <div class="pill active" onclick="switchPhoneTab('shopper','sh-track',this)">📦 Track</div>
+          <div class="pill" onclick="switchPhoneTab('shopper','sh-collect',this)">🏠 Collect</div>
+          <div class="pill" onclick="switchPhoneTab('shopper','sh-returns',this)">🔄 Returns</div>
+        </div>
+        <div class="phones-showcase" id="shopper-phones">
+          <div class="phone-col" id="sh-track">
+            <div class="phone-lbl">📦 Track Parcel</div>
+            <div class="phone"><div class="phone-screen">
+              <div class="scr-hdr"><div class="app-nm">delivery<span>sitter</span></div><div class="status">9:41</div></div>
+              <div class="scr-sec">
+                <div class="p-card" style="background:var(--forest-pale);border:2px solid var(--forest);">
+                  <div class="ic" style="background:var(--forest);color:var(--gold);">📦</div>
+                  <div class="info"><div class="cid">AP-20490321 · ASOS</div><div class="cdt">Est. Fri 4 Apr</div></div>
+                  <span class="p-badge pbg">With Sitter</span>
+                </div>
+              </div>
+              <div class="scr-sec">
+                <div class="p-tracker">
+                  <div class="t-step"><div class="t-dot done">✓</div><div class="t-lbl">Dispatched</div></div>
+                  <div class="t-line done"></div>
+                  <div class="t-step"><div class="t-dot done">✓</div><div class="t-lbl">In Transit</div></div>
+                  <div class="t-line done"></div>
+                  <div class="t-step"><div class="t-dot act">★</div><div class="t-lbl">With Sitter</div></div>
+                  <div class="t-line"></div>
+                  <div class="t-step"><div class="t-dot pend">4</div><div class="t-lbl">Collected</div></div>
+                </div>
+              </div>
+              <div class="scr-sec">
+                <div class="p-alert paf"><div class="ai">👩</div><div class="at"><strong>Mary</strong> — Navan (0.3 km) ★4.9. Ready any time.</div></div>
+                <div class="p-ir"><span class="lbl">Hold expires</span><span class="val" style="color:var(--amber);">Sun 6 Apr (72h)</span></div>
+              </div>
+              <div class="scr-sec">
+                <button class="p-btn p-btn-f">📲 I'm on my way →</button>
+                <button class="p-btn p-btn-o" onclick="alert('Extension €5.00 · Requires all-party approval')">⏱ Request 10-Day Extension (€5)</button>
+              </div>
+              <div class="p-nav">
+                <div class="p-nav-item active"><div class="p-nav-ic">📦</div>Parcels</div>
+                <div class="p-nav-item"><div class="p-nav-ic">🔄</div>Returns</div>
+                <div class="p-nav-item"><div class="p-nav-ic">👤</div>Account</div>
+              </div>
+            </div></div>
+          </div>
+          <div class="phone-col" id="sh-collect" style="display:none">
+            <div class="phone-lbl gold">🏠 Collection</div>
+            <div class="phone"><div class="phone-screen">
+              <div class="scr-hdr"><div class="app-nm">delivery<span>sitter</span></div><div class="status">9:41</div></div>
+              <div class="scr-sec">
+                <div class="p-map"><div class="p-map-pin">🏠</div><div class="p-map-live">● LIVE</div><div class="p-map-eta">14 Elm Grove, Navan</div></div>
+                <div class="p-alert pag"><div class="ai">⏱</div><div class="at">Address shown <strong>2 minutes only</strong>. Auto-hides after collection.</div></div>
+              </div>
+              <div class="scr-sec">
+                <div class="scr-ttl">🔑 Collection Code</div>
+                <div style="background:var(--forest);border-radius:10px;padding:12px;text-align:center;">
+                  <div style="font-family:'Playfair Display',serif;font-size:34px;font-weight:800;color:var(--gold);letter-spacing:8px;">7 4 2 9</div>
+                  <div style="font-size:8px;color:rgba(255,255,255,.6);margin-top:4px;">Do not share · Expires 72h</div>
+                </div>
+              </div>
+              <div class="scr-sec">
+                <button class="p-btn p-btn-g" onclick="openModal('qr')">📲 Mutual QR Handover</button>
+              </div>
+              <div class="p-nav">
+                <div class="p-nav-item active"><div class="p-nav-ic">📦</div>Parcels</div>
+                <div class="p-nav-item"><div class="p-nav-ic">🔄</div>Returns</div>
+                <div class="p-nav-item"><div class="p-nav-ic">👤</div>Account</div>
+              </div>
+            </div></div>
+          </div>
+          <div class="phone-col" id="sh-returns" style="display:none">
+            <div class="phone-lbl blue">🔄 Returns</div>
+            <div class="phone"><div class="phone-screen">
+              <div class="scr-hdr"><div class="app-nm">delivery<span>sitter</span></div><div class="status">9:41</div></div>
+              <div class="scr-sec">
+                <div class="p-card" style="background:var(--red-pale);border:1px solid var(--red);">
+                  <div class="ic" style="background:var(--red);color:#fff;">⚠️</div>
+                  <div class="info"><div class="cid">AP-20490321 — Wrong Size</div><div class="cdt">ASOS · Opened at home</div></div>
+                </div>
+              </div>
+              <div class="scr-sec">
+                <div class="p-ir"><span class="lbl">AI confidence</span><span class="val g">94% sealed ✓</span></div>
+                <div class="p-ir"><span class="lbl">CT2 decision window</span><span class="val" style="color:var(--amber);">48h</span></div>
+                <div class="p-alert paf"><div class="ai">✅</div><div class="at">Return logged. ASOS notified. Consumer Rights Act 2022 applies.</div></div>
+              </div>
+              <div class="p-nav">
+                <div class="p-nav-item"><div class="p-nav-ic">📦</div>Parcels</div>
+                <div class="p-nav-item active"><div class="p-nav-ic">🔄</div>Returns</div>
+                <div class="p-nav-item"><div class="p-nav-ic">👤</div>Account</div>
+              </div>
+            </div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DRIVER APP -->
+      <div class="view" id="view-driver-app">
+        <div class="ph"><div class="ph-title">Driver App</div><div class="ph-sub">Route · QR handover · Shift-scoped · Address data protected</div></div>
+        <div class="phones-showcase">
+          <div class="phone-col">
+            <div class="phone-lbl">🚐 Today's Route</div>
+            <div class="phone"><div class="phone-screen">
+              <div class="scr-hdr"><div class="app-nm">delivery<span>sitter</span></div><div class="status">Driver · Active</div></div>
+              <div class="scr-sec">
+                <div class="p-map" style="height:80px;"><div class="p-map-pin">🗺️</div><div class="p-map-live">● LIVE</div><div class="p-map-eta">Stop 3 of 6 · 2.1km</div></div>
+              </div>
+              <div class="scr-sec">
+                <div class="p-alert paf"><div class="ai">📍</div><div class="at"><strong>Mary O'Brien</strong> — navigation pin only, no text copy. 3 parcels. ETA 4 min.</div></div>
+                <button class="p-btn p-btn-f" onclick="alert('2-min alert sent to Sitter — Mary notified')">📲 Alert Sitter (2 min)</button>
+              </div>
+              <div class="scr-sec">
+                <div class="p-qr"><div class="p-qr-vis"></div><div class="p-qr-id">DS:AP-20490321:v1</div></div>
+                <button class="p-btn p-btn-g" onclick="openModal('qr')">📲 Sitter Scans to Confirm</button>
+              </div>
+              <div class="p-nav">
+                <div class="p-nav-item active"><div class="p-nav-ic">🗺️</div>Route</div>
+                <div class="p-nav-item"><div class="p-nav-ic">📦</div>Parcels</div>
+                <div class="p-nav-item"><div class="p-nav-ic">📷</div>Scan</div>
+                <div class="p-nav-item"><div class="p-nav-ic">📊</div>Stats</div>
+              </div>
+            </div></div>
+          </div>
+          <div class="phone-col">
+            <div class="phone-lbl">📊 Shift Stats</div>
+            <div class="phone"><div class="phone-screen">
+              <div class="scr-hdr"><div class="app-nm">delivery<span>sitter</span></div><div class="status">3 of 6 done</div></div>
+              <div class="scr-sec"><div class="p-stat-row">
+                <div class="p-stat-box"><span class="p-stat-num">12</span><div class="p-stat-lbl">Delivered</div></div>
+                <div class="p-stat-box gold"><span class="p-stat-num">100%</span><div class="p-stat-lbl">QR Success</div></div>
+              </div></div>
+              <div class="scr-sec"><div class="p-alert paf"><div class="ai">🔒</div><div class="at">Address data removed at shift end. Navigation pins only — no text copy.</div></div></div>
+              <div class="scr-sec"><button class="p-btn p-btn-o" onclick="alert('Shift ended. JWT expired. Data cleared.')">🏁 End Shift</button></div>
+              <div class="p-nav">
+                <div class="p-nav-item"><div class="p-nav-ic">🗺️</div>Route</div>
+                <div class="p-nav-item"><div class="p-nav-ic">📦</div>Parcels</div>
+                <div class="p-nav-item"><div class="p-nav-ic">📷</div>Scan</div>
+                <div class="p-nav-item active"><div class="p-nav-ic">📊</div>Stats</div>
+              </div>
+            </div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RETAILER DASHBOARD -->
+      <div class="view" id="view-retailer">
+        <div class="ph"><div class="ph-title">CT2 Retailer Dashboard</div><div class="ph-sub">Parcel network · Returns · API sandbox · ROI Calculator</div></div>
+        <div class="pill-tabs">
+          <div class="pill active" onclick="showTab('r','r-overview',this)">📊 Overview</div>
+          <div class="pill" onclick="showTab('r','r-returns',this)">🔄 Returns</div>
+          <div class="pill" onclick="showTab('r','r-api',this)">⚙️ API</div>
+          <div class="pill" onclick="showTab('r','r-calc',this)">💰 ROI Calc</div>
+        </div>
+        <div id="r-overview">
+          <div class="stat-grid g4">
+            <div class="stat-card forest"><div class="stat-n">2,847</div><div class="stat-l">Parcels via DS</div></div>
+            <div class="stat-card gold"><div class="stat-n">97.2%</div><div class="stat-l">First Attempt Rate</div></div>
+            <div class="stat-card pale"><div class="stat-n">€45,552</div><div class="stat-l">Failed Delivery Cost Saved</div></div>
+            <div class="stat-card"><div class="stat-n">18</div><div class="stat-l">Returns Pending</div></div>
+          </div>
+          <div class="notif notif-f"><div class="notif-ic">🔒</div><div><div class="notif-title">CT1 Privacy — API Gateway Enforced</div><div class="notif-body">CT1 name, address, phone, email blocked at gateway — not just UI. You receive Eircode and parcel status only.</div></div></div>
+        </div>
+        <div id="r-returns" style="display:none">
+          <div class="card"><div class="card-head"><div class="card-title">🔄 Returns — Decision Queue</div><span class="badge br">3 urgent</span></div>
+          <div class="card-body">
+            <div style="display:flex;gap:10px;margin-bottom:16px;">
+              <div style="flex:1;background:var(--forest-pale);border:2px solid var(--forest);border-radius:var(--r-sm);padding:12px;cursor:pointer;">
+                <div style="font-size:12px;font-weight:700;color:var(--forest);">AP-20490312 — ASOS</div>
+                <div style="font-size:11px;color:var(--ink-light);margin-top:3px;">Wrong size · AI: 94% sealed ✓</div>
+              </div>
+              <div style="flex:1;background:var(--white);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px;cursor:pointer;">
+                <div style="font-size:12px;font-weight:700;color:var(--forest);">AP-20490287 — Zara</div>
+                <div style="font-size:11px;color:var(--ink-light);margin-top:3px;">Damaged · <span class="badge br">3h remaining</span></div>
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;margin-bottom:16px;" id="dec-row">
+              <div class="dec-btn selected" id="rd-1" onclick="selRD(1)"><div class="dec-ico">♻️</div><div class="dec-label">A — Re-Sell</div><div class="dec-sub">€1.00 fee</div></div>
+              <div class="dec-btn" id="rd-2" onclick="selRD(2)"><div class="dec-ico">🏭</div><div class="dec-label">B — Return Depot</div><div class="dec-sub">€1.50 net</div></div>
+              <div class="dec-btn" id="rd-3" onclick="selRD(3)"><div class="dec-ico">🔁</div><div class="dec-label">C — Redirect</div><div class="dec-sub">€1.00 fee</div></div>
+              <div class="dec-btn" id="rd-4" onclick="selRD(4)"><div class="dec-ico">✗</div><div class="dec-label">D — Decline</div><div class="dec-sub">CRA 2022</div></div>
+            </div>
+            <button class="p-btn p-btn-f" style="font-size:13px;padding:12px;" onclick="submitRD()">Submit Decision</button>
+            <div id="rd-result" style="display:none;margin-top:10px;"></div>
+          </div></div>
+        </div>
+        <div id="r-api" style="display:none">
+          <div class="card"><div class="card-head"><div class="card-title">⚙️ API Sandbox</div></div><div class="card-body">
+            <div class="sandbox-box">POST /retailer/parcels/route
+{
+  "retailer_ref": "ASOS-2026-04771",
+  "eircode": "C15 F3X2",
+  "size": "medium",
+  "declared_value": 89.98
+}</div>
+            <button style="background:var(--forest);color:#fff;border:none;border-radius:var(--r-sm);padding:10px 20px;font-weight:700;font-size:13px;margin-top:10px;cursor:pointer;" onclick="document.getElementById('api-r').style.display='block'">▶ Run</button>
+            <div id="api-r" style="display:none;margin-top:10px;"><div class="sandbox-box">// 200 OK
+{
+  "status": "routed",
+  "sitter_area": "Navan, Co. Meath",
+  "ds_parcel_id": "AP-20490321",
+  "note": "CT1 identity NOT included"
+}</div></div>
+          </div></div>
+        </div>
+        <div id="r-calc" style="display:none">
+          <div class="card"><div class="card-head"><div class="card-title">💰 Failed Delivery ROI Calculator</div></div><div class="card-body">
+            <div class="inp-row">
+              <div style="flex:1"><div class="inp-label">Monthly volume</div><input type="number" class="inp" id="r-vol" value="5000"></div>
+              <div style="flex:1"><div class="inp-label">Failed delivery rate %</div><input type="number" class="inp" id="r-rate" value="15"></div>
+              <button class="inp-row btn-calc" onclick="calcRetailer()">Calculate</button>
+            </div>
+            <div class="stat-grid g3">
+              <div class="stat-card pale"><div class="stat-n" id="r-failures">750</div><div class="stat-l">Failed/Month</div></div>
+              <div class="stat-card gold"><div class="stat-n" id="r-save">€12,000</div><div class="stat-l">Monthly Saving</div></div>
+              <div class="stat-card forest"><div class="stat-n" id="r-annual">€144,000</div><div class="stat-l">Annual Saving</div></div>
+            </div>
+          </div></div>
+        </div>
+      </div>
+
+      <!-- LOGISTICS -->
+      <div class="view" id="view-logistics">
+        <div class="ph"><div class="ph-title">Logistics Operator Portal</div><div class="ph-sub">An Post · Route planning · SLA · Custody chain</div></div>
+        <div class="stat-grid g4">
+          <div class="stat-card forest"><div class="stat-n">24</div><div class="stat-l">Active Sitters</div></div>
+          <div class="stat-card gold"><div class="stat-n">97.2%</div><div class="stat-l">First Attempt Rate</div></div>
+          <div class="stat-card pale"><div class="stat-n">6</div><div class="stat-l">Routes Today</div></div>
+          <div class="stat-card"><div class="stat-n">0</div><div class="stat-l">Failed QR Events</div></div>
+        </div>
+        <div class="card"><div class="card-head"><div class="card-title">🔗 Custody Chain — Live Event Log</div></div><div class="card-body">
+          <div class="notif notif-f"><div class="notif-ic">🔗</div><div><div class="notif-title">Chain Hash: SHA-256 · Append-only</div><div class="notif-body">chain_hash = SHA-256(event_id + prior_hash + parcel_id + actor_id + timestamp). No event can be deleted.</div></div></div>
+          <table class="tbl"><thead><tr><th>Event</th><th>Parcel</th><th>Time</th><th>Chain</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge bg">depot_scan</span></td><td>AP-20490321</td><td>08:14</td><td><span class="badge bbl">✓ Verified</span></td></tr>
+            <tr><td><span class="badge bg">mutual_qr_confirm</span></td><td>AP-20490321</td><td>09:22</td><td><span class="badge bbl">✓ Verified</span></td></tr>
+            <tr><td><span class="badge bgo">with_sitter</span></td><td>AP-20490321</td><td>09:22</td><td><span class="badge bbl">✓ Verified</span></td></tr>
+          </tbody></table>
+        </div></div>
+      </div>
+
+      <!-- ADMIN -->
+      <div class="view" id="view-admin">
+        <div class="ph"><div class="ph-title">Admin Dashboard — HR Platform</div><div class="ph-sub">Phil Fairclough · Sitters Admin · Onboarding pipeline</div></div>
+        <div class="pill-tabs">
+          <div class="pill active" onclick="showTab('a','a-network',this)">📊 Network</div>
+          <div class="pill" onclick="showTab('a','a-sitters',this)">👥 Sitters</div>
+          <div class="pill" onclick="showTab('a','a-fraud',this)">🚨 Fraud</div>
+        </div>
+        <div id="a-network">
+          <div class="stat-grid g4">
+            <div class="stat-card forest"><div class="stat-n">24</div><div class="stat-l">Active Sitters</div></div>
+            <div class="stat-card gold"><div class="stat-n">6</div><div class="stat-l">Pending Onboarding</div></div>
+            <div class="stat-card pale"><div class="stat-n">2</div><div class="stat-l">Vetting Expiry Alert</div></div>
+            <div class="stat-card"><div class="stat-n">1</div><div class="stat-l">Suspended</div></div>
+          </div>
+          <div class="card"><div class="card-head"><div class="card-title">🔄 Onboarding Pipeline</div></div><div class="card-body">
+            <table class="tbl"><thead><tr><th>Sitter</th><th>Gate</th><th>Blocker</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td>Siobhan M.</td><td><span class="badge bgo">Gate 5</span></td><td>NVB 8 days outstanding</td><td><button style="background:var(--gold-pale);color:#8B6A00;border:1px solid var(--gold-border);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;" onclick="alert('Chase email sent')">Chase NVB</button></td></tr>
+              <tr><td>Declan F.</td><td><span class="badge br">Gate 7</span></td><td>Storage photo review</td><td><button style="background:var(--forest-pale);color:var(--forest);border:1px solid #b8d8bc;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;">Review Photos</button></td></tr>
+            </tbody></table>
+          </div></div>
+        </div>
+        <div id="a-sitters" style="display:none">
+          <div class="card"><div class="card-head"><div class="card-title">👥 Sitter Roster</div><input type="text" placeholder="Search…" style="padding:6px 12px;border:1px solid var(--border);border-radius:var(--r-sm);font-size:13px;outline:none;"></div>
+          <div class="card-body">
+            <table class="tbl"><thead><tr><th>Name</th><th>Status</th><th>Rating</th><th>Cap</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Mary O'Brien</strong></td><td><span class="badge bg">Active</span></td><td>★ 4.9</td><td>73%</td><td><button style="background:var(--forest-pale);color:var(--forest);border:1px solid #b8d8bc;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;" onclick="openModal('sitter-rec')">View</button></td></tr>
+              <tr><td><strong>Tom Byrne</strong></td><td><span class="badge bg">Active</span></td><td>★ 4.7</td><td>41%</td><td><button style="background:var(--forest-pale);color:var(--forest);border:1px solid #b8d8bc;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;">View</button></td></tr>
+              <tr><td><strong>Patrick Kelly</strong></td><td><span class="badge br">Suspended</span></td><td>★ 3.2</td><td>—</td><td><button style="background:var(--red-pale);color:var(--red);border:1px solid #f5b8b8;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;">Review Case</button></td></tr>
+            </tbody></table>
+          </div></div>
+        </div>
+        <div id="a-fraud" style="display:none">
+          <div class="card"><div class="card-head"><div class="card-title">🚨 Fraud Flags</div><span class="badge br">2 Active</span></div><div class="card-body">
+            <table class="tbl"><thead><tr><th>Rule</th><th>Triggered</th><th>Severity</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td><strong>R-P1</strong> IBAN change + spike</td><td>Patrick Kelly · 2h</td><td><span class="badge br">HIGH</span></td><td><span class="badge br">Under Review</span></td></tr>
+            </tbody></table>
+          </div></div>
+        </div>
+      </div>
+
+      <!-- GRANT VIEW -->
+      <div class="view" id="view-grant">
+        <div class="ph"><div class="ph-title">Social Enterprise Programme View</div><div class="ph-sub">DSP Intreo · Furthr · LEO Meath · Welfare compatibility</div></div>
+        <div style="background:linear-gradient(135deg,var(--forest),var(--forest-mid));border-radius:var(--r-md);padding:20px 24px;margin-bottom:20px;color:#fff;">
+          <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--gold);">🌱 Social Enterprise Employment Model</div>
+          <div style="font-size:13px;color:rgba(255,255,255,.7);margin-top:4px;">Creating flexible, welfare-compatible income for carers, older adults, people with disabilities, and long-term unemployed across Ireland</div>
+        </div>
+        <div class="stat-grid g4">
+          <div class="impact-card"><div class="impact-num">24</div><div style="font-size:13px;color:var(--ink-mid);margin-top:4px;">Pilot Sitters · Co. Meath</div><div class="impact-tag">Open Employment</div></div>
+          <div class="impact-card"><div class="impact-num">100%</div><div style="font-size:13px;color:var(--ink-mid);margin-top:4px;">Welfare-compatible by design</div><div class="impact-tag">Self-managed cap</div></div>
+          <div class="impact-card"><div class="impact-num">€0</div><div style="font-size:13px;color:var(--ink-mid);margin-top:4px;">Minimum hours commitment</div><div class="impact-tag">Genuinely flexible</div></div>
+          <div class="impact-card"><div class="impact-num">9</div><div style="font-size:13px;color:var(--ink-mid);margin-top:4px;">Protected characteristics — open to all</div><div class="impact-tag">Equal Status Act 2000</div></div>
+        </div>
+        <div class="notif notif-g"><div class="notif-ic">📅</div><div><div class="notif-title">Meeting: Tracey Smith · DSP Intreo Drogheda · 16 April 2026 10:30am</div><div class="notif-body">Welfare cap + Article 22 GDPR + social enterprise employment model + DSP client referral pathway.</div></div></div>
+      </div>
+
+      <!-- SENIOR MANAGEMENT -->
+      <div class="view" id="view-sm">
+        <div class="ph"><div class="ph-title">Senior Management</div><div class="ph-sub">Michelle Bailey · Full access · FIDO2 in production · 60-min session</div></div>
+        <div class="stat-grid g4">
+          <div class="stat-card forest"><div class="stat-n">€874,940</div><div class="stat-l">Y1 Revenue</div></div>
+          <div class="stat-card gold"><div class="stat-n">€176,300</div><div class="stat-l">Y1 Staffing (v2.1)</div></div>
+          <div class="stat-card pale"><div class="stat-n">(€1,850)</div><div class="stat-l">Y1 Operating Result</div></div>
+          <div class="stat-card"><div class="stat-n">M8</div><div class="stat-l">Cash-flow Positive</div></div>
+        </div>
+        <div class="notif notif-g"><div class="notif-ic">📅</div><div><div class="notif-title">Next: Tracey Smith · DSP Intreo · 16 Apr 2026 10:30am</div><div class="notif-body">tracey.smith@welfare.ie · 087 184 9606</div></div></div>
+        <div class="card"><div class="card-head"><div class="card-title">⚠️ Critical Open Issues</div><span class="badge br">3 Blocking</span></div><div class="card-body">
+          <div class="notif notif-r"><div class="notif-ic">🚨</div><div><div class="notif-title">FV3-L-01 — RCT (Julia Distaff)</div><div class="notif-body">May require 20–35% deduction at source. Confirm before first payout.</div></div></div>
+          <div class="notif notif-r"><div class="notif-ic">🚨</div><div><div class="notif-title">FV3-F-01 — Confirmed Fraud Process (Solicitor)</div><div class="notif-body">4-step process before any suspension or Garda referral.</div></div></div>
+          <div class="notif notif-r"><div class="notif-ic">🚨</div><div><div class="notif-title">FV3-I-01 — Depot Scan Batch Chain Hash (Tech)</div><div class="notif-body">Batch must generate individual child events. Resolve before QR build phase.</div></div></div>
+        </div></div>
+      </div>
+
+      <!-- CODE GENERATOR + ACCESS LOG -->
+      <div class="view" id="view-access">
+        <div class="ph"><div class="ph-title">Access Control — Code Generator &amp; Log</div><div class="ph-sub" id="access-sub">Michelle Bailey · Admin only · All codes expire 7 days · Your code permanent</div></div>
+        <div class="admin-only-msg" id="admin-msg">🔒 This section is read-only for your access level. Contact Michelle Bailey to generate access codes.</div>
+
+        <!-- GENERATOR -->
+        <div class="card" id="gen-card">
+          <div class="card-head"><div class="card-title">🔑 Generate New Access Code</div></div>
+          <div class="card-body">
+            <div class="gen-form">
+              <div class="gen-field"><label>Recipient Full Name</label><input type="text" id="gen-name" placeholder="e.g. Tracey Smith"></div>
+              <div class="gen-field"><label>Recipient Email</label><input type="email" id="gen-email" placeholder="e.g. tracey.smith@welfare.ie"></div>
+              <div class="gen-field"><label>Organisation</label><input type="text" id="gen-org" placeholder="e.g. DSP Intreo"></div>
+              <div class="gen-field"><label>Access Role</label>
+                <select id="gen-role">
+                  <option value="">— Select role —</option>
+                  <option value="INV" data-tier="T4" data-label="Investor (Deep Diligence)" data-views="Investor Dashboard, Financial Model, All App Demos">Investor (Deep Diligence)</option>
+                  <option value="ANG" data-tier="T3" data-label="Angel Investor" data-views="Investor Dashboard, All App Demos">Angel Investor (T3)</option>
+                  <option value="GRT" data-tier="T3" data-label="Grant Body / DSP Intreo" data-views="Social Enterprise View, Sitter App, Admin Overview">Grant Body / DSP Intreo</option>
+                  <option value="ANP" data-tier="T5" data-label="An Post — Logistics Partner" data-views="Driver App, Logistics Portal, Sitter App">An Post / Logistics Partner</option>
+                  <option value="RET" data-tier="T5" data-label="CT2 Retailer" data-views="Retailer Dashboard, Shopper App, Sitter App">CT2 Retailer</option>
+                  <option value="STF" data-tier="T5" data-label="Internal Staff / Sitter Manager" data-views="Admin Dashboard, All Operational Views">Internal Staff / Manager</option>
+                  <option value="SIT" data-tier="T5" data-label="Sitter (Demo)" data-views="Sitter App only">Sitter Demo</option>
+                  <option value="SHP" data-tier="T5" data-label="CT1 Shopper Demo" data-views="Shopper App only">Shopper Demo</option>
+                  <option value="DRV" data-tier="T5" data-label="Driver Demo" data-views="Driver App, Logistics Portal">Driver Demo</option>
+                </select>
+              </div>
+            </div>
+            <button class="gen-btn" onclick="generateCode()">🔑 Generate Code &amp; Draft Email</button>
+            <div class="gen-result" id="gen-result">
+              <div class="gen-code-display">
+                <span class="gen-code-val" id="gen-code-val">—</span>
+                <div class="gen-code-meta" id="gen-code-meta"></div>
+              </div>
+              <div class="email-subject" id="email-subj"></div>
+              <div class="email-preview" id="email-body"></div>
+              <div class="email-actions">
+                <a id="mailto-link" href="#"><button class="btn-send" onclick="markSent()">📧 Open in Email App</button></a>
+                <button class="btn-copy" onclick="copyEmail()">📋 Copy Email Text</button>
+              </div>
+              <div id="sent-confirm" style="display:none;" class="notif notif-f" style="margin-top:10px;"><div class="notif-ic">✅</div><div><div class="notif-title">Code saved to Access Log</div><div class="notif-body">Record created with full audit trail.</div></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACCESS LOG -->
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">📋 Access Log — Full Audit Trail</div>
+            <button class="csv-btn" onclick="exportCSV()">⬇ Export CSV</button>
+          </div>
+          <div class="card-body">
+            <div class="log-toolbar">
+              <input type="text" class="log-search" placeholder="Search by name, code, role, email…" oninput="filterLog(this.value)">
+              <span id="log-count" style="font-size:13px;color:var(--ink-light);white-space:nowrap;"></span>
+            </div>
+            <div style="overflow-x:auto;">
+              <table class="tbl" id="log-tbl">
+                <thead><tr>
+                  <th>Code</th><th>Name</th><th>Email</th><th>Role</th><th>Generated</th><th>Expires</th><th>Status</th><th>Last Access</th><th>Action</th>
+                </tr></thead>
+                <tbody id="log-tbody"></tbody>
+              </table>
+              <div id="log-empty" style="text-align:center;padding:30px;color:var(--ink-light);font-size:14px;">No access codes generated yet. Use the generator above to create your first code.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- GITHUB GUIDE -->
+        <div class="card" id="github-card">
+          <div class="card-head"><div class="card-title">🚀 GitHub Pages Setup — 5 Minute Guide</div><span class="badge bg">One-time setup</span></div>
+          <div class="card-body">
+            <div class="notif notif-g"><div class="notif-ic">💡</div><div><div class="notif-title">Once set up, your demo will be live at a permanent URL. Share that link + access code with anyone — they click, enter code, see only their role.</div></div></div>
+            <div class="gh-step"><div class="gh-num">1</div><div class="gh-text"><strong>Create a free GitHub account</strong><span>Go to <strong>github.com</strong> → Sign up → Use any username (e.g. deliverysitter-michelle)</span></div></div>
+            <div class="gh-step"><div class="gh-num">2</div><div class="gh-text"><strong>Create a new repository</strong><span>Click the green "New" button → Name it: <code style="background:#f0f0f0;padding:2px 6px;border-radius:4px;">deliverysitter-demo</code> → Tick "Public" → Click "Create repository"</span></div></div>
+            <div class="gh-step"><div class="gh-num">3</div><div class="gh-text"><strong>Upload this file</strong><span>On your new repository page → Click "uploading an existing file" → Drag and drop this HTML file → <strong>Rename it to: index.html</strong> → Click "Commit changes"</span></div></div>
+            <div class="gh-step"><div class="gh-num">4</div><div class="gh-text"><strong>Enable GitHub Pages</strong><span>In your repository → Click "Settings" (top tab) → Left sidebar: "Pages" → Under "Source" select "main" branch → Click Save</span></div></div>
+            <div class="gh-step"><div class="gh-num">5</div><div class="gh-text"><strong>Your live URL is ready in ~60 seconds</strong><span>GitHub will show your URL — it will look like:</span><div class="code-block">https://deliverysitter-michelle.github.io/deliverysitter-demo/</div></div></div>
+            <div class="gh-step"><div class="gh-num">6</div><div class="gh-text"><strong>Share with stakeholders — two options:</strong><span>Option A — Send the URL + their code separately (most secure)<br>Option B — Send a direct link with code embedded:</span><div class="code-block" id="example-url">https://your-username.github.io/deliverysitter-demo/?access=DS-T4-INV-0001</div></div></div>
+            <div class="gh-step"><div class="gh-num">7</div><div class="gh-text"><strong>Save to OneDrive as backup</strong><span>Save this HTML file to OneDrive → You can open it locally on your laptop for meetings too. Both work — same file, same codes.</span></div></div>
+            <div class="notif notif-b" style="margin-top:10px;"><div class="notif-ic">📋</div><div><div class="notif-title">Access Log Note</div><div class="notif-body">The access log saves in your browser's local storage on the device you use to manage codes. Export CSV regularly to back it up — especially before switching devices. The log on GitHub Pages is per-device (your management device = your log).</div></div></div>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-bg" id="modal-qr">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('qr')">×</button>
+    <div class="modal-title">🔐 Mutual QR — Live Handover</div>
+    <div class="qr-demo"></div>
+    <div class="gps-widget">
+      <div class="gps-row"><span class="gps-lbl">GPS Co-location</span><span class="gps-val">✓ Both within 50m</span></div>
+      <div class="gps-row"><span class="gps-lbl">Scan window</span><span class="gps-val" id="qr-timer">87 seconds</span></div>
+      <div class="gps-row"><span class="gps-lbl">Mock location</span><span class="gps-val">✓ Not detected</span></div>
+    </div>
+    <button style="width:100%;padding:12px;background:var(--forest);color:#fff;border:none;border-radius:var(--r-md);font-size:14px;font-weight:700;margin-top:14px;cursor:pointer;" onclick="completeQR()">✅ Both Confirmed — Custody Transferred</button>
+    <div id="qr-result" style="display:none;margin-top:10px;"></div>
+  </div>
+</div>
+<div class="modal-bg" id="modal-sitter-rec">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('sitter-rec')">×</button>
+    <div class="modal-title">👤 Mary O'Brien — Sitter Record</div>
+    <table class="tbl" style="margin-top:10px;">
+      <tr><td style="color:var(--ink-light);font-size:12px;">Status</td><td><span class="badge bg">Active</span></td></tr>
+      <tr><td style="color:var(--ink-light);font-size:12px;">Garda NVB</td><td><span class="badge bg">✓ Cleared Jan 2026</span></td></tr>
+      <tr><td style="color:var(--ink-light);font-size:12px;">Onfido ID</td><td><span class="badge bg">✓ Verified</span></td></tr>
+      <tr><td style="color:var(--ink-light);font-size:12px;">SSA v2.0</td><td><span class="badge bg">✓ Signed DocuSign</span></td></tr>
+      <tr><td style="color:var(--ink-light);font-size:12px;">IBAN</td><td style="color:var(--ink-light);font-style:italic;">Hidden — blocked for this role</td></tr>
+    </table>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// CONSTANTS & ACCESS CONTROL
+// ═══════════════════════════════════════════
+const ADMIN_CODE = 'DEMO-2026-ADMIN';
+const ADMIN_NAME = 'Michelle Bailey';
+const PLATFORM_URL = window.location.href.split('?')[0];
+
+// Role definitions for access control
+const ROLE_VIEWS = {
+  'INV':  ['overview','investor','sitter-app','shopper-app','driver-app','retailer','logistics'],
+  'ANG':  ['overview','investor','sitter-app','shopper-app'],
+  'GRT':  ['overview','grant','sitter-app','admin'],
+  'ANP':  ['overview','driver-app','logistics','sitter-app'],
+  'RET':  ['overview','retailer','sitter-app','shopper-app'],
+  'STF':  ['overview','admin','sitter-app','shopper-app','driver-app','retailer','logistics'],
+  'SIT':  ['overview','sitter-app'],
+  'SHP':  ['overview','shopper-app'],
+  'DRV':  ['overview','driver-app','logistics'],
+  'ADMIN':['overview','investor','sitter-app','shopper-app','driver-app','retailer','logistics','admin','grant','sm','access'],
+};
+
+const ROLE_LABELS = {
+  'INV':'Investor (Deep Diligence)','ANG':'Angel Investor','GRT':'Grant Body / DSP',
+  'ANP':'An Post · Logistics','RET':'CT2 Retailer','STF':'Internal Staff / Manager',
+  'SIT':'Sitter Demo','SHP':'Shopper Demo','DRV':'Driver Demo','ADMIN':'Senior Management'
+};
+
+const OVERVIEW_DATA = {
+  'ADMIN': {title:`Welcome, ${ADMIN_NAME}`, sub:'Full access · All sections · Admin controls active',
+    body:`<div class="notif notif-f"><div class="notif-ic">👑</div><div><div class="notif-title">Senior Management — Full Platform Control</div><div class="notif-body">All dashboards, admin tools, fraud engine, code generator, and access log visible. Use Access Control section to generate and manage stakeholder codes.</div></div></div><div class="notif notif-g"><div class="notif-ic">📅</div><div><div class="notif-title">Next: Tracey Smith · DSP Intreo · 16 April 2026 10:30am</div><div class="notif-body">tracey.smith@welfare.ie · 087 184 9606 · Agenda: welfare cap + social enterprise employment model</div></div></div>`},
+  'INV':  {title:'Investor Demo', sub:'Deep Diligence T4 · Full financial view', body:`<div class="notif notif-g"><div class="notif-ic">📈</div><div><div class="notif-title">DeliverySitter — Investor Demo</div><div class="notif-body">Seed raise: €280k–€320k · 10–14% equity · €1M–€1.5M pre-money · Pilot launch 22 June 2026 · Cash-flow positive Month 8</div></div></div>`},
+  'ANG':  {title:'Angel Investor Demo', sub:'T3 · Platform overview', body:`<div class="notif notif-g"><div class="notif-ic">📈</div><div><div class="notif-title">DeliverySitter — Angel Investor View</div><div class="notif-body">Ireland's first community delivery OS · Pre-revenue · Pilot June 2026</div></div></div>`},
+  'GRT':  {title:'Programme Dashboard', sub:'Grant / DSP Intreo view · Social enterprise metrics', body:`<div class="notif notif-f"><div class="notif-ic">🌱</div><div><div class="notif-title">Social Enterprise — DSP / Grant Assessor View</div><div class="notif-body">Welfare-compatible income · Open employment · Co. Meath pilot · 22 June 2026 launch</div></div></div>`},
+  'ANP':  {title:'An Post Partner Demo', sub:'Logistics integration · Driver app · Custody chain', body:`<div class="notif notif-f"><div class="notif-ic">📦</div><div><div class="notif-title">An Post Integration Overview</div><div class="notif-body">Primary logistics partner · 24 Sitter network · Co. Meath pilot · SLA target ≥95% first-attempt</div></div></div>`},
+  'RET':  {title:'CT2 Retailer Demo', sub:'Returns intelligence · API · ROI Calculator', body:`<div class="notif notif-b"><div class="notif-ic">🏪</div><div><div class="notif-title">Retailer Integration</div><div class="notif-body">Reduce failed deliveries · AI-powered returns · CT1 privacy enforced at API gateway</div></div></div>`},
+  'STF':  {title:'Staff Platform Demo', sub:'Admin tools · HR modules · Operational views', body:`<div class="notif notif-f"><div class="notif-ic">⚙️</div><div><div class="notif-title">Staff / Sitter Manager Access</div><div class="notif-body">Onboarding pipeline · Network overview · All operational dashboards</div></div></div>`},
+  'SIT':  {title:'Sitter App Demo', sub:'Your earning tools · Welfare cap · Scan & release', body:`<div class="notif notif-f"><div class="notif-ic">📱</div><div><div class="notif-title">Welcome to DeliverySitter — Sitter App</div><div class="notif-body">Accept and hold parcels · Set your own welfare cap · Get paid in 3 working days</div></div></div>`},
+  'SHP':  {title:'Shopper App Demo', sub:'Track · Collect · Returns', body:`<div class="notif notif-b"><div class="notif-ic">🛍️</div><div><div class="notif-title">Never miss a delivery again</div><div class="notif-body">Your parcel is safe with a vetted neighbour. Collect when it suits you within 72 hours.</div></div></div>`},
+  'DRV':  {title:'Driver App Demo', sub:'Route · QR handover · Shift tools', body:`<div class="notif notif-f"><div class="notif-ic">🚐</div><div><div class="notif-title">Driver Platform</div><div class="notif-body">Your daily route · Mutual QR handover · Address data protected · Session expires at shift end</div></div></div>`},
+};
+
+const NAV_ITEMS = [
+  {id:'overview', ic:'🏠', label:'Overview', sec:'PLATFORM'},
+  {id:'investor', ic:'📈', label:'Investor Dashboard', sec:'DASHBOARDS'},
+  {id:'grant', ic:'🌱', label:'Social Enterprise View', sec:'DASHBOARDS'},
+  {id:'sm', ic:'👑', label:'Senior Management', sec:'DASHBOARDS'},
+  {id:'sitter-app', ic:'📱', label:'Sitter App', sec:'APPLICATIONS'},
+  {id:'shopper-app', ic:'🛍️', label:'Shopper App', sec:'APPLICATIONS'},
+  {id:'driver-app', ic:'🚐', label:'Driver App', sec:'APPLICATIONS'},
+  {id:'retailer', ic:'🏪', label:'Retailer Dashboard', sec:'APPLICATIONS'},
+  {id:'logistics', ic:'📦', label:'Logistics Portal', sec:'APPLICATIONS'},
+  {id:'admin', ic:'⚙️', label:'Admin Dashboard', sec:'MANAGEMENT'},
+  {id:'access', ic:'🔑', label:'Access Control', sec:'MANAGEMENT'},
+];
+
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+let currentCode = null;
+let currentTypeCode = null;
+let isAdmin = false;
+let generatedCode = null;
+let generatedEmailText = '';
+let generatedEmailSubject = '';
+
+// ═══════════════════════════════════════════
+// STORAGE — Access Log
+// ═══════════════════════════════════════════
+function getLog() {
+  try { return JSON.parse(localStorage.getItem('ds_access_log') || '[]'); }
+  catch(e) { return []; }
+}
+function saveLog(log) {
+  try { localStorage.setItem('ds_access_log', JSON.stringify(log)); } catch(e) {}
+}
+function addLogEntry(entry) {
+  const log = getLog();
+  log.unshift(entry);
+  saveLog(log);
+}
+function updateLogEntry(code, updates) {
+  const log = getLog();
+  const idx = log.findIndex(e => e.code === code);
+  if (idx >= 0) { Object.assign(log[idx], updates); saveLog(log); }
+}
+
+// Track access for non-admin codes
+function recordAccess(code) {
+  updateLogEntry(code, {lastAccess: new Date().toISOString(), accessed: true});
+}
+
+// ═══════════════════════════════════════════
+// LOGIN
+// ═══════════════════════════════════════════
+function doLogin() {
+  const raw = document.getElementById('code-input').value.trim().toUpperCase();
+  const err = document.getElementById('login-err');
+  const exp = document.getElementById('login-exp');
+  const ok  = document.getElementById('login-ok');
+  err.style.display = 'none'; exp.style.display = 'none'; ok.style.display = 'none';
+  document.getElementById('code-input').style.borderColor = '';
+
+  // Admin — permanent
+  if (raw === ADMIN_CODE) {
+    launchPlatform(raw, 'ADMIN', ADMIN_NAME);
+    return;
+  }
+
+  // Check in log
+  const log = getLog();
+  const entry = log.find(e => e.code === raw);
+  if (!entry) {
+    err.style.display = 'block';
+    document.getElementById('code-input').style.borderColor = 'var(--red)';
+    return;
+  }
+
+  // Check expiry
+  if (new Date() > new Date(entry.expires)) {
+    exp.style.display = 'block';
+    document.getElementById('code-input').style.borderColor = 'var(--amber)';
+    return;
+  }
+
+  // Valid — record access
+  recordAccess(raw);
+  launchPlatform(raw, entry.typeCode, entry.recipientName);
+}
+
+function launchPlatform(code, typeCode, name) {
+  currentCode = code;
+  currentTypeCode = typeCode;
+  isAdmin = (typeCode === 'ADMIN');
+
+  const ok = document.getElementById('login-ok');
+  ok.style.display = 'block';
+  ok.textContent = `✅ Access granted — ${ROLE_LABELS[typeCode] || typeCode}. Loading…`;
+
+  setTimeout(() => {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('platform').style.display = 'flex';
+    initPlatform(name, typeCode);
+  }, 600);
+}
+
+document.getElementById('code-input').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+function doLogout() {
+  document.getElementById('platform').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('code-input').value = '';
+  ['login-err','login-exp','login-ok'].forEach(id => document.getElementById(id).style.display='none');
+  document.getElementById('code-input').style.borderColor = '';
+  currentCode = null; currentTypeCode = null; isAdmin = false;
+}
+
+// ═══════════════════════════════════════════
+// INIT PLATFORM
+// ═══════════════════════════════════════════
+function initPlatform(name, typeCode) {
+  const views = ROLE_VIEWS[typeCode] || ['overview'];
+  document.getElementById('role-badge').textContent = ROLE_LABELS[typeCode] || typeCode;
+  buildSidebar(views);
+
+  // Overview
+  const od = OVERVIEW_DATA[typeCode] || {title:'Welcome', sub:'', body:''};
+  document.getElementById('ov-title').textContent = od.title;
+  document.getElementById('ov-sub').textContent = od.sub;
+  document.getElementById('ov-body').innerHTML = od.body;
+
+  // Access section — admin only
+  if (!isAdmin) {
+    const msg = document.getElementById('admin-msg');
+    if(msg) msg.style.display = 'block';
+    const gc = document.getElementById('gen-card');
+    if(gc) gc.style.display = 'none';
+    const ghc = document.getElementById('github-card');
+    // Keep visible but read-only for context
+    const genBtn = document.querySelector('.gen-btn');
+    if(genBtn) genBtn.disabled = true;
+  } else {
+    renderLog();
+  }
+
+  // Fraud tab — admin + staff only
+  const ft = document.getElementById('a-fraud');
+  if(!isAdmin && typeCode !== 'STF' && ft) ft.style.display='none';
+
+  show('overview');
+}
+
+function buildSidebar(views) {
+  const sb = document.getElementById('sidebar');
+  let html = ''; let lastSec = '';
+  NAV_ITEMS.forEach(item => {
+    if (!views.includes(item.id)) return;
+    if (item.sec !== lastSec) { html += `<div class="sb-label">${item.sec}</div>`; lastSec = item.sec; }
+    html += `<div class="sb-item" onclick="show('${item.id}')"><span class="ic">${item.ic}</span>${item.label}</div>`;
+  });
+  sb.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════
+function show(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + id)?.classList.add('active');
+  document.querySelectorAll('.sb-item').forEach(i => {
+    i.classList.toggle('active', i.getAttribute('onclick') === `show('${id}')`);
+  });
+  if (id === 'access' && isAdmin) renderLog();
+}
+
+// ═══════════════════════════════════════════
+// CODE GENERATOR
+// ═══════════════════════════════════════════
+let serialCounters = {};
+
+function getNextSerial(typeCode) {
+  const log = getLog();
+  const count = log.filter(e => e.typeCode === typeCode).length + 1;
+  return String(count).padStart(4,'0');
+}
+
+function computeChecksum(tier, type, serial) {
+  const input = 'DS' + tier + type + serial;
+  let sum = 0;
+  for(let c of input) sum += c.charCodeAt(0);
+  const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const c1 = chars[(sum * 7) % 36];
+  const c2 = chars[(sum * 13 + input.length) % 36];
+  return c1 + c2;
+}
+
+function generateCode() {
+  const name  = document.getElementById('gen-name').value.trim();
+  const email = document.getElementById('gen-email').value.trim();
+  const org   = document.getElementById('gen-org').value.trim();
+  const sel   = document.getElementById('gen-role');
+  const opt   = sel.options[sel.selectedIndex];
+
+  if (!name || !email || !sel.value) {
+    alert('Please fill in Name, Email, and select a Role.'); return;
+  }
+
+  const typeCode = sel.value;
+  const tier     = opt.dataset.tier;
+  const roleLabel= opt.dataset.label;
+  const views    = opt.dataset.views;
+  const serial   = getNextSerial(typeCode);
+  const checksum = computeChecksum(tier, typeCode, serial);
+  const code     = `DS-${tier}-${typeCode}-${serial}-${checksum}`;
+
+  const now     = new Date();
+  const expires = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+  const expiresStr = expires.toLocaleDateString('en-IE', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const nowStr  = now.toLocaleDateString('en-IE', {year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'});
+
+  generatedCode = code;
+
+  // Build direct link
+  const link = `${PLATFORM_URL}?access=${encodeURIComponent(code)}`;
+
+  // Build email
+  const subject = `DeliverySitter Demo Access — ${roleLabel}`;
+  const body = `Dear ${name},
+
+You have been granted access to the DeliverySitter™ demo platform.
+
+─────────────────────────────────────
+YOUR ACCESS DETAILS
+─────────────────────────────────────
+Access Code:    ${code}
+Role:           ${roleLabel}
+Organisation:   ${org || '—'}
+Access Granted: ${nowStr}
+Access Expires: ${expiresStr} (7 days)
+─────────────────────────────────────
+
+WHAT YOU CAN SEE
+${views}
+
+HOW TO ACCESS
+1. Click this link: ${link}
+   (or open it in your browser)
+2. Your access code is pre-filled if using the link above.
+   If not, enter: ${code}
+3. Explore the sections relevant to your role.
+
+IMPORTANT
+• This access code is for your personal use only — please do not share it.
+• It expires on ${expiresStr}.
+• Your access is read-only — no changes can be made to the platform.
+• If you have any questions, please contact me directly.
+
+For assistance:
+Michelle Bailey | Founder & CEO
+DeliverySitter${String.fromCodePoint(0x1F4E6)}com™
+michellebaileydeliverysitter@outlook.com
+087 746 5993
+
+Kind regards,
+Michelle Bailey`;
+
+  generatedEmailText = body;
+  generatedEmailSubject = subject;
+
+  // Save to log
+  addLogEntry({
+    code, typeCode, tier, recipientName: name, recipientEmail: email,
+    organisation: org, roleLabel, views, generated: now.toISOString(),
+    expires: expires.toISOString(), accessed: false, lastAccess: null, revoked: false
+  });
+
+  // Display result
+  document.getElementById('gen-code-val').textContent = code;
+  document.getElementById('gen-code-meta').textContent = `Role: ${roleLabel} · Expires: ${expiresStr} · ${org}`;
+  document.getElementById('email-subj').textContent = `Subject: ${subject}`;
+  document.getElementById('email-body').textContent = body;
+
+  const mailtoBody = encodeURIComponent(body);
+  const mailtoSubj = encodeURIComponent(subject);
+  document.getElementById('mailto-link').href = `mailto:${email}?subject=${mailtoSubj}&body=${mailtoBody}`;
+
+  document.getElementById('gen-result').style.display = 'block';
+  document.getElementById('sent-confirm').style.display = 'none';
+
+  renderLog();
+}
+
+function markSent() {
+  setTimeout(() => {
+    document.getElementById('sent-confirm').style.display = 'flex';
+  }, 500);
+}
+
+function copyEmail() {
+  const text = `Subject: ${generatedEmailSubject}\n\n${generatedEmailText}`;
+  navigator.clipboard.writeText(text).then(() => {
+    alert('✅ Email text copied to clipboard. Paste into your email app.');
+  }).catch(() => {
+    prompt('Copy this email text:', text);
+  });
+}
+
+// ═══════════════════════════════════════════
+// ACCESS LOG RENDER
+// ═══════════════════════════════════════════
+function renderLog(filter) {
+  const log = getLog();
+  const tbody = document.getElementById('log-tbody');
+  const empty = document.getElementById('log-empty');
+  const countEl = document.getElementById('log-count');
+  if (!tbody) return;
+
+  const now = new Date();
+  let filtered = filter ? log.filter(e =>
+    (e.recipientName||'').toLowerCase().includes(filter.toLowerCase()) ||
+    (e.code||'').toLowerCase().includes(filter.toLowerCase()) ||
+    (e.roleLabel||'').toLowerCase().includes(filter.toLowerCase()) ||
+    (e.recipientEmail||'').toLowerCase().includes(filter.toLowerCase())
+  ) : log;
+
+  countEl.textContent = `${filtered.length} record${filtered.length !== 1 ? 's' : ''}`;
+
+  if (!filtered.length) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = filtered.map((e, idx) => {
+    const expired = e.revoked || (new Date(e.expires) < now);
+    const statusClass = e.revoked ? 'br' : (expired ? 'status-expired br' : (e.accessed ? 'bg' : 'bgo'));
+    const statusText  = e.revoked ? '🚫 Revoked' : (expired ? '⏱ Expired' : (e.accessed ? '✅ Active' : '⏳ Not yet used'));
+    const genDate = new Date(e.generated).toLocaleDateString('en-IE',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    const expDate = new Date(e.expires).toLocaleDateString('en-IE',{day:'2-digit',month:'short',year:'numeric'});
+    const lastAcc = e.lastAccess ? new Date(e.lastAccess).toLocaleDateString('en-IE',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : '—';
+    return `<tr>
+      <td><code style="font-size:11px;background:var(--forest-pale);padding:2px 6px;border-radius:4px;color:var(--forest);">${e.code}</code></td>
+      <td><strong>${e.recipientName}</strong><br><span style="font-size:11px;color:var(--ink-light);">${e.organisation||''}</span></td>
+      <td style="font-size:12px;">${e.recipientEmail}</td>
+      <td><span class="badge bbl" style="font-size:10px;">${e.roleLabel}</span></td>
+      <td style="font-size:12px;white-space:nowrap;">${genDate}</td>
+      <td style="font-size:12px;white-space:nowrap;">${expDate}</td>
+      <td><span class="badge ${statusClass}" style="font-size:10px;">${statusText}</span></td>
+      <td style="font-size:12px;">${lastAcc}</td>
+      <td>${!e.revoked && !expired ? `<button class="revoke-btn" onclick="revokeCode('${e.code}')">Revoke</button>` : '—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+function filterLog(q) { renderLog(q); }
+
+function revokeCode(code) {
+  if(!confirm(`Revoke access code ${code}? This cannot be undone.`)) return;
+  updateLogEntry(code, {revoked:true});
+  renderLog();
+}
+
+// ═══════════════════════════════════════════
+// CSV EXPORT
+// ═══════════════════════════════════════════
+function exportCSV() {
+  const log = getLog();
+  if(!log.length){ alert('No records to export.'); return; }
+  const headers = ['Code','Recipient','Email','Organisation','Role','Tier','Generated','Expires','Status','Last Access'];
+  const now = new Date();
+  const rows = log.map(e => {
+    const expired = e.revoked || new Date(e.expires) < now;
+    const status = e.revoked ? 'Revoked' : (expired ? 'Expired' : (e.accessed ? 'Active' : 'Not yet used'));
+    return [e.code, e.recipientName, e.recipientEmail, e.organisation||'', e.roleLabel, e.tier,
+      new Date(e.generated).toISOString(), new Date(e.expires).toISOString(),
+      status, e.lastAccess || ''].map(v => `"${String(v).replace(/"/g,'""')}"`).join(',');
+  });
+  const csv = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `DS_Access_Log_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ═══════════════════════════════════════════
+// URL PARAM AUTO-LOGIN
+// ═══════════════════════════════════════════
+(function(){
+  const p = new URLSearchParams(window.location.search);
+  const code = (p.get('access') || p.get('code') || '').trim().toUpperCase();
+  if (code) {
+    document.getElementById('code-input').value = code;
+    setTimeout(doLogin, 150);
+  }
+})();
+
+// ═══════════════════════════════════════════
+// PHONE TABS
+// ═══════════════════════════════════════════
+function switchPhoneTab(group, showId, pillEl) {
+  const c = document.getElementById(group+'-phones');
+  if(c) c.querySelectorAll('.phone-col').forEach(x => x.style.display='none');
+  const t = document.getElementById(showId);
+  if(t) t.style.display='flex';
+  if(pillEl) {
+    pillEl.closest('.pill-tabs')?.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    pillEl.classList.add('active');
+  }
+}
+
+function showTab(group, id, pillEl) {
+  const ids = {r:['r-overview','r-returns','r-api','r-calc'], a:['a-network','a-sitters','a-fraud']};
+  (ids[group]||[]).forEach(x => { const el=document.getElementById(x); if(el) el.style.display = x===id?'block':'none'; });
+  if(pillEl){ pillEl.closest('.pill-tabs')?.querySelectorAll('.pill').forEach(p=>p.classList.remove('active')); pillEl.classList.add('active'); }
+}
+
+// ═══════════════════════════════════════════
+// MODALS
+// ═══════════════════════════════════════════
+let qrInterval;
+function openModal(id) {
+  document.getElementById('modal-'+id)?.classList.add('open');
+  if(id==='qr') { let s=87; clearInterval(qrInterval); const el=document.getElementById('qr-timer'); qrInterval=setInterval(()=>{ s--; if(el) el.textContent=s+' seconds'; if(s<=0){clearInterval(qrInterval); if(el) el.textContent='EXPIRED';}},1000); }
+}
+function closeModal(id) { document.getElementById('modal-'+id)?.classList.remove('open'); clearInterval(qrInterval); }
+document.querySelectorAll('.modal-bg').forEach(m => m.addEventListener('click', e => { if(e.target===m) { m.classList.remove('open'); clearInterval(qrInterval); }}));
+
+function completeQR() {
+  const r=document.getElementById('qr-result');
+  if(r){r.style.display='block';r.innerHTML='<div class="notif notif-f"><div class="notif-ic">✅</div><div><div class="notif-title">Custody Transferred — Chain Hash Written</div><div class="notif-body">mutual_qr_confirm event logged. Insurance ACTIVE. Sitter payout queued (3 working days). CT1 notified.</div></div></div>';}
+}
+
+// ═══════════════════════════════════════════
+// DEMO INTERACTIONS
+// ═══════════════════════════════════════════
+function demoScan(el) {
+  const ic=el.querySelector('.p-scan-ic'), txt=el.querySelector('.p-scan-txt');
+  if(ic) ic.textContent='✅'; if(txt) txt.textContent='Scanned — AP-20490321';
+  setTimeout(()=>{ if(ic) ic.textContent='📦'; if(txt) txt.textContent='Point at parcel barcode'; },3000);
+}
+
+let selRDv=1;
+function selRD(n) {
+  selRDv=n;
+  [1,2,3,4].forEach(i=>document.getElementById('rd-'+i)?.classList.remove('selected'));
+  document.getElementById('rd-'+n)?.classList.add('selected');
+  document.getElementById('rd-result').style.display='none';
+}
+function submitRD() {
+  const msgs={1:'<div class="notif notif-f"><div class="notif-ic">♻️</div><div><div class="notif-title">A — Re-Sell approved. Dynamic QR updated. €1.00 fee on next invoice.</div></div></div>',2:'<div class="notif notif-b"><div class="notif-ic">🏭</div><div><div class="notif-title">B — Return to depot. Logistics collection scheduled. €1.50 net.</div></div></div>',3:'<div class="notif notif-g"><div class="notif-ic">🔁</div><div><div class="notif-title">C — Redirect initiated. €1.00 fee.</div></div></div>',4:'<div class="notif notif-r"><div class="notif-ic">✗</div><div><div class="notif-title">D — Declined. CT1 notified. CRA 2022 compliance required.</div></div></div>'};
+  const r=document.getElementById('rd-result'); if(r){r.style.display='block';r.innerHTML=msgs[selRDv]||'';}
+}
+
+function calcRetailer() {
+  const vol=parseInt(document.getElementById('r-vol')?.value)||5000;
+  const rate=parseFloat(document.getElementById('r-rate')?.value)||15;
+  const f=Math.round(vol*rate/100);
+  const m=f*16, a=m*12;
+  const fEl=document.getElementById('r-failures'), sEl=document.getElementById('r-save'), aEl=document.getElementById('r-annual');
+  if(fEl) fEl.textContent=f.toLocaleString();
+  if(sEl) sEl.textContent='€'+m.toLocaleString();
+  if(aEl) aEl.textContent='€'+a.toLocaleString();
+}
+</script>
+</body>
+</html>
